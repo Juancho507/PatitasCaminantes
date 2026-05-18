@@ -9,10 +9,10 @@ class TamañoDAO {
         $this->tipo = $tipo;
     }
     public function consultar() {
-        return "SELECT Tipo FROM Tamaño WHERE idTamaño = " . $this->id;
+        return "SELECT Tamaño FROM Tamaño WHERE idTamaño = " . $this->id;
     }
     public function consultarTodos() {
-        return "SELECT idTamaño, Tipo FROM Tamaño";
+        return "SELECT idTamaño, Tamaño FROM Tamaño";
     }
 }
 ?>

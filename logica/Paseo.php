@@ -14,12 +14,20 @@ class Paseo {
     private $idPerro;
     private $precio;
     private $dueño;
+    private $bozal;
 
 public function getDueño() {
     return $this->dueño;
 }
 public function setDueño($dueño) {
     $this->dueño = $dueño;
+}
+
+public function getBozal() {
+    return $this->bozal;
+}
+public function setBozal($bozal) {
+    $this->bozal = $bozal;
 }
 
 public function setPaseador($paseador) {
@@ -46,6 +54,12 @@ public function setPaseador($paseador) {
   
     public function getIdPerro() {
         return $this->idPerro;
+    }
+    public function getIdEstadoPaseo() {
+        return $this->idEstadoPaseo;
+    }
+    public function setIdEstadoPaseo($id) {
+        $this->idEstadoPaseo = $id;
     }
     public function getPrecio() {
         return $this->precio;
@@ -83,7 +97,7 @@ public function setPaseador($paseador) {
         $this->idPerro = $idPerro;
     }
     
-    public function insertar($idPerro) {
+    public function insertar($idPerros = []) {
         $conexion = new Conexion();
         $conexion->abrir();
         $fechaInicioDT = new DateTime($this->fechaInicio);
@@ -91,13 +105,14 @@ public function setPaseador($paseador) {
         $fechaFinDT->modify('+1 hour');
         $this->fechaFin = $fechaFinDT->format('Y-m-d H:i:s');
         
-        $paseoDAO = new PaseoDAO(0, $this->fechaInicio, $this->fechaFin, $this->paseador, $this->estadoPaseo);
+        $idPerros = array_pad((array)$idPerros, 6, 0);
+        
+        $paseoDAO = new PaseoDAO(0, $this->fechaInicio, $this->fechaFin, $this->paseador, $this->estadoPaseo, $this->bozal, "", (int)$idPerros[0], (int)$idPerros[1], (int)$idPerros[2], (int)$idPerros[3], (int)$idPerros[4], (int)$idPerros[5]);
         $conexion->ejecutar($paseoDAO->insertarPaseo());
         
         if ($conexion->getResultado()) {
             $idInsertado = $conexion->obtenerId(); 
             $this->id = $idInsertado; 
-            $conexion->ejecutar($paseoDAO->insertarPaseoPerro($idInsertado, $idPerro));
             $conexion->cerrar();
             return true;
         }
@@ -105,14 +120,7 @@ public function setPaseador($paseador) {
         $conexion->cerrar();
         return false;
     }
-    public function asociarPerro($idPerro) {
-        $conexion = new Conexion();
-        $conexion->abrir();
-        $paseoDAO = new PaseoDAO();
-        $conexion->ejecutar($paseoDAO->insertarPaseoPerro($this->id, $idPerro));
-        $conexion->cerrar();
-        return true;
-    }
+
 public function buscarHistorial($rol, $idUsuario, $palabras) {
     $conexion = new Conexion();
     $conexion->abrir();
@@ -138,6 +146,7 @@ public function buscarHistorial($rol, $idUsuario, $palabras) {
             $registro[6]
         );
         $paseo->setPrecio($registro[7]);
+        $paseo->setIdEstadoPaseo((int)$registro[8]);
 
         if ($rol === "paseador") {
             $paseo->setDueño($registro[3]);
@@ -210,14 +219,6 @@ public function buscarHistorial($rol, $idUsuario, $palabras) {
 
 
     
-    public function asignarPerroAPaseo($Paseo, $idPerro) {
-        $conexion = new Conexion();
-        $conexion->abrir();
-        $paseoDAO = new PaseoDAO();
-        $conexion->ejecutar($paseoDAO->insertarPaseoPerro($Paseo, $idPerro));
-        $conexion->cerrar();
-    }
-
     public function consultarRealizadosPorPaseador($idPaseador) {
         $conexion = new Conexion();
         $paseoDAO = new PaseoDAO();
@@ -336,5 +337,5 @@ public function puedeAceptarPaseo() {
     
     
 }
-
 ?>
+

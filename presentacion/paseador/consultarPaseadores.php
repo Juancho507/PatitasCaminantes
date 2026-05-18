@@ -28,8 +28,8 @@ $lista = $paseador->consultarActivos();
                     <div class="card-body">
                         <h5 class="card-title"><?php echo htmlspecialchars($p->getNombre() . " " . $p->getApellido()); ?></h5>
                          <p><strong>Estado:</strong> 
-                            <?php 
-                            echo ($p->getActivo() == 1) ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'; 
+                             <?php 
+                            echo ($p->getEstadoId() == 2) ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'; 
                             ?>
                         </p>
                         <p><strong>Correo:</strong> <?php echo htmlspecialchars($p->getCorreo()); ?></p>
@@ -40,7 +40,7 @@ $lista = $paseador->consultarActivos();
                         if (!empty($tarifas)) {
                             echo "<p><strong>Tarifas por hora:</strong></p><ul>";
                             foreach ($tarifas as $tarifa) {
-                                echo "<li>" . htmlspecialchars($tarifa->getNombreTamaño()) . ": $" . htmlspecialchars(number_format($tarifa->getPrecioHora(), 2, ',', '.')) . "</li>";
+                                echo "<li>" . htmlspecialchars($tarifa->getNombrePeligrosidad()) . ": $" . htmlspecialchars(number_format($tarifa->getPrecioHora(), 2, ',', '.')) . "</li>";
                             }
                             echo "</ul>";
                         } else {

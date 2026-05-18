@@ -12,15 +12,37 @@ $mensaje = "";
 $claseMensaje = "";
 $razaLogica = new Raza();
 $razas = $razaLogica->consultarTodos();
+$peligrosidadLogica = new Peligrosidad();
+$peligrosidades = $peligrosidadLogica->consultarTodos();
 
 if (isset($_POST["crearPerro"])) {
-    $nombrePerro = $_POST["nombrePerro"] ?? '';
-    $razaId = $_POST["razaId"] ?? '';
-    $raza = new Raza($razaId);
+    $nombrePerro = trim($_POST["nombrePerro"] ?? '');
+    $peso = floatval($_POST["peso"] ?? 0);
+    $razaId = intval($_POST["razaId"] ?? 0);
+    $peligrosidadId = intval($_POST["peligrosidad"] ?? 0);
+    $recomendacion = trim($_POST["recomendacion"] ?? '');
     $fotoRuta = "";
     $errorEnSubidaFoto = false;
 
-    if (isset($_FILES["foto"]) && $_FILES["foto"]["error"] === UPLOAD_ERR_OK) {
+    if (empty($nombrePerro)) {
+        $mensaje = "El nombre del perro es obligatorio.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+    } elseif ($peso <= 0) {
+        $mensaje = "El peso debe ser un valor positivo.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+    } elseif ($razaId <= 0) {
+        $mensaje = "Debe seleccionar una raza.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+    } elseif ($peligrosidadId <= 0) {
+        $mensaje = "Debe seleccionar un nivel de peligrosidad.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+    }
+
+    if (!$errorEnSubidaFoto && isset($_FILES["foto"]) && $_FILES["foto"]["error"] === UPLOAD_ERR_OK) {
         $nombreFotoOriginal = $_FILES["foto"]["name"];
         $rutaTemporal = $_FILES["foto"]["tmp_name"];
         $extension = pathinfo($nombreFotoOriginal, PATHINFO_EXTENSION);
@@ -42,7 +64,7 @@ if (isset($_POST["crearPerro"])) {
                 $errorEnSubidaFoto = true;
             }
         }
-    } elseif ($_FILES["foto"]["error"] !== UPLOAD_ERR_NO_FILE) {
+    } elseif (!$errorEnSubidaFoto && isset($_FILES["foto"]) && $_FILES["foto"]["error"] !== UPLOAD_ERR_NO_FILE) {
         $mensaje = "Error en la subida de la foto (código: " . $_FILES["foto"]["error"] . ").";
         $claseMensaje = "alert-danger";
         $errorEnSubidaFoto = true;
@@ -51,11 +73,12 @@ if (isset($_POST["crearPerro"])) {
     $dueño = new Dueño($idDueñoLogueado);
 
     if (!$errorEnSubidaFoto) {
-        $perro = new Perro(nombre: $nombrePerro, foto: $fotoRuta, raza: $raza, dueño: $dueño);
+        $raza = new Raza($razaId);
+        $perro = new Perro(0, $nombrePerro, $peso, $recomendacion, 1, $fotoRuta, $raza, $dueño, $peligrosidadId);
         $guardadoExitoso = $perro->insertar();
 
         if ($guardadoExitoso) {
-            $mensaje = "¡Éxito! Perro '" . htmlspecialchars($nombrePerro) . "' registrado correctamente.";
+            $mensaje = "Perro '" . htmlspecialchars($nombrePerro) . "' registrado correctamente.";
             $claseMensaje = "alert-success";
             $_POST = array();
         } else {
@@ -67,29 +90,12 @@ if (isset($_POST["crearPerro"])) {
         }
     }
 }
-if (isset($_POST["solicitarRaza"])) {
-    $nombreRaza = trim($_POST["nuevaRaza"] ?? "");
 
-    if (!empty($nombreRaza)) {
-        $nuevaRaza = new Raza(0, $nombreRaza);
-        $exito = $nuevaRaza->insertarSinTamaño();
-        if ($exito) {
-            $mensaje = "Solicitud enviada. Espere entre 10 y 15 minutos mientras el administrador aprueba la raza.";
-            $claseMensaje = "alert-info";
-        } else {
-            $mensaje = "No se pudo enviar la solicitud. Intente más tarde.";
-            $claseMensaje = "alert-danger";
-        }
-    } else {
-        $mensaje = "Debe ingresar un nombre de raza válido.";
-        $claseMensaje = "alert-warning";
-    }
-}
 ?>
 
 <div class="container">
     <div class="row mt-4">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-header"><h4>Registrar Nuevo Perro</h4></div>
                 <div class="card-body">
@@ -100,44 +106,69 @@ if (isset($_POST["solicitarRaza"])) {
                     <?php endif; ?>
 
                     <form action="<?= "?pid=" . base64_encode("presentacion/perro/registrarPerro.php"); ?>" method="POST" enctype="multipart/form-data">
-                        <div class="form-group mb-4">
-                            <label for="nombrePerro">Nombre del Perro:</label>
-                            <input type="text" class="form-control" id="nombrePerro" name="nombrePerro" required
-                                value="<?php echo isset($_POST['nombrePerro']) ? htmlspecialchars($_POST['nombrePerro']) : ''; ?>">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="nombrePerro">Nombre del Perro:</label>
+                                    <input type="text" class="form-control" id="nombrePerro" name="nombrePerro" required
+                                        value="<?php echo isset($_POST['nombrePerro']) ? htmlspecialchars($_POST['nombrePerro']) : ''; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="peso">Peso (kg):</label>
+                                    <input type="number" step="0.01" min="0.1" class="form-control" id="peso" name="peso" required
+                                        value="<?php echo isset($_POST['peso']) ? htmlspecialchars($_POST['peso']) : ''; ?>">
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="razaId">Raza:</label>
-                            <select class="form-control" id="razaId" name="razaId" required>
-                                <option value="">Seleccione una raza</option>
-                                <?php foreach ($razas as $razaItem):
-                                if ($razaItem->getTamaño() == 5) continue;
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="razaId">Raza:</label>
+                                    <select class="form-control" id="razaId" name="razaId" required>
+                                        <option value="">Seleccione una raza</option>
+                                        <?php foreach ($razas as $razaItem):
+                                        $t = $razaItem->getTamaño();
+                                        if ($t === null || $t === "" || $t == 0) continue;
                                         ?>
-   												 <option value="<?php echo $razaItem->getId(); ?>"
-      							  <?php echo isset($_POST['razaId']) && $_POST['razaId'] == $razaItem->getId() ? 'selected' : ''; ?>>
-       								 <?php echo htmlspecialchars($razaItem->getNombre()); ?>
-   									 </option>
-								<?php endforeach; ?>
-                            </select>
+                                        <option value="<?php echo $razaItem->getId(); ?>"
+                                            <?php echo isset($_POST['razaId']) && $_POST['razaId'] == $razaItem->getId() ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($razaItem->getNombre()) . " (" . $razaItem->getTamaño() . ")"; ?>
+                                        </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="peligrosidad">Peligrosidad:</label>
+                                    <select class="form-control" id="peligrosidad" name="peligrosidad" required>
+                                        <option value="">Seleccione nivel</option>
+                                        <?php foreach ($peligrosidades as $p): ?>
+                                        <option value="<?php echo $p->getId(); ?>"
+                                            <?php echo isset($_POST['peligrosidad']) && $_POST['peligrosidad'] == $p->getId() ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($p->getNivel()); ?>
+                                        </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
+                        <div class="form-group mb-3">
+                            <label for="recomendacion">Recomendacion:</label>
+                            <textarea class="form-control" id="recomendacion" name="recomendacion" rows="3"><?php echo isset($_POST['recomendacion']) ? htmlspecialchars($_POST['recomendacion']) : ''; ?></textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
                             <label for="foto">Foto de Perfil:</label>
                             <input type="file" class="form-control" id="foto" name="foto" accept="image/png">
                             <small class="form-text text-muted">Solo se permiten imágenes PNG.</small>
                         </div>
 
-                        <button type="submit" name="crearPerro" class="btn btn-primary mt-4">Registrar Perro</button>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <form method="POST">
-                        <div class="form-group mb-3">
-                            <label for="nuevaRaza">¿No encuentra la raza?</label>
-                            <input type="text" class="form-control" id="nuevaRaza" name="nuevaRaza" placeholder="Ingrese el nombre de la nueva raza">
-                        </div>
-                        <button type="submit" name="solicitarRaza" class="btn btn-primary">Solicitar nueva raza</button>
+                        <button type="submit" name="crearPerro" class="btn btn-primary">Registrar Perro</button>
                     </form>
                 </div>
             </div>

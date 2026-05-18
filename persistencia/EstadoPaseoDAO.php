@@ -9,7 +9,10 @@ class EstadoPaseoDAO {
     }
     
     public function consultarTodosLosEstados() {
-        return "SELECT idEstadoPaseo, valor FROM EstadoPaseo";
+        return "SELECT idEstadoPaseo, Estado FROM EstadoPaseo";
+    }
+    public function consultarPorId() {
+        return "SELECT idEstadoPaseo, Estado FROM EstadoPaseo WHERE idEstadoPaseo = " . $this->id;
     }
 }
 ?>

@@ -4,17 +4,17 @@ class TarifaDAO {
     private $id;
     private $precioHora;
     private $paseadorIdPaseador;
-    private $tamañoIdTamaño;
-    private $nombreTamaño;
+    private $peligrosidadIdPeligrosidad;
+    private $nombrePeligrosidad;
     private $fechaInicio;
     private $activa;
     
-    public function __construct($id = "", $precioHora = "", $paseadorIdPaseador = "", $tamañoIdTamaño = "", $nombreTamaño = "", $fechaInicio = "", $activa = "") {
+    public function __construct($id = "", $precioHora = "", $paseadorIdPaseador = "", $peligrosidadIdPeligrosidad = "", $nombrePeligrosidad = "", $fechaInicio = "", $activa = "") {
         $this->id = $id;
         $this->precioHora = $precioHora;
         $this->paseadorIdPaseador = $paseadorIdPaseador;
-        $this->tamañoIdTamaño = $tamañoIdTamaño;
-        $this->nombreTamaño = $nombreTamaño;
+        $this->peligrosidadIdPeligrosidad = $peligrosidadIdPeligrosidad;
+        $this->nombrePeligrosidad = $nombrePeligrosidad;
         $this->fechaInicio = $fechaInicio;
         $this->activa = $activa;
         
@@ -24,28 +24,28 @@ class TarifaDAO {
             t.idTarifa,
             t.PrecioHora,
             t.Paseador_idPaseador,
-            t.Tamaño_idTamaño,
-            tam.Tipo,
+            t.Peligrosidad_idPeligrosidad,
+            p.Nivel,
             t.FechaInicio,
             t.Activa
         FROM Tarifa t
-        INNER JOIN Tamaño tam ON t.Tamaño_idTamaño = tam.idTamaño
+        INNER JOIN Peligrosidad p ON t.Peligrosidad_idPeligrosidad = p.idPeligrosidad
         WHERE t.Paseador_idPaseador = '" . $idPaseador . "'
           AND t.Activa = 1
-        ORDER BY tam.Tipo ASC";
+        ORDER BY p.idPeligrosidad ASC";
     }
     
     public function desactivarAnterior() {
         return "UPDATE Tarifa
             SET Activa = 0
             WHERE Paseador_idPaseador = $this->paseadorIdPaseador
-              AND Tamaño_idTamaño = $this->tamañoIdTamaño
+              AND Peligrosidad_idPeligrosidad = $this->peligrosidadIdPeligrosidad
               AND Activa = 1";
     }
     
     public function insertarNueva() {
-        return "INSERT INTO Tarifa (PrecioHora, FechaInicio, Paseador_idPaseador, Tamaño_idTamaño, Activa)
-            VALUES ($this->precioHora, CURDATE(), $this->paseadorIdPaseador, $this->tamañoIdTamaño, 1)";
+        return "INSERT INTO Tarifa (PrecioHora, FechaInicio, Paseador_idPaseador, Peligrosidad_idPeligrosidad, Activa)
+            VALUES ($this->precioHora, CURDATE(), $this->paseadorIdPaseador, $this->peligrosidadIdPeligrosidad, 1)";
     }
     
 }

@@ -21,7 +21,7 @@ $dueño->consultar();
         </a>
       </li>
       
-            <li class="nav-item">
+      <li class="nav-item">
         <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/dueño/editarDueño.php") ?>">
           <i class="fa-solid fa-user-pen"></i> Editar Datos
         </a>
@@ -34,29 +34,31 @@ $dueño->consultar();
         <ul class="dropdown-menu" aria-labelledby="perrosDropdown">
           <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/perro/registrarPerro.php") ?>">Registrar Nuevo</a></li>
           <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/perro/consultarPerros.php") ?>">Ver Todos</a></li>
+          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/perro/solicitarRaza.php") ?>">Solicitar Nueva Raza</a></li>
         </ul>
       </li>
 
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="paseadoresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="	fa-solid fa-person-walking"></i> Paseadores
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="paseadoresDropdown">
-    <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseador/consultarPaseadores.php") ?>">Ver Todos</a></li>
-    <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/solicitarPaseo.php") ?>">Solicitar Paseo</a></li>
-  </ul>
-</li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="paseadoresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-person-walking"></i> Paseadores
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="paseadoresDropdown">
+          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseador/consultarPaseadores.php") ?>">Ver Todos</a></li>
+          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/solicitarPaseo.php") ?>">Solicitar Paseo</a></li>
+        </ul>
+      </li>
 
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="historialDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="fa-solid fa-file-lines"></i> Historial
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="historialDropdown">
-    <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/historialPaseosd.php") ?>">Paseos</a></li>
-    <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/verFacturas.php") ?>">Facturas</a></li>
-  </ul>
-</li>
-<li class="nav-item">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="historialDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-file-lines"></i> Historial
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="historialDropdown">
+          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/historialPaseosd.php") ?>">Paseos</a></li>
+          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseo/verFacturas.php") ?>">Facturas</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/dueño/graficaPrecios.php"); ?>">
           <i class="fa-solid fa-chart-line"></i> Estadísticas
         </a>

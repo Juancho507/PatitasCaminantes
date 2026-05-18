@@ -1,102 +1,102 @@
 <?php
-ob_start();
-require_once(__DIR__ . "/../../fpdf/fpdf.php");
-include(__DIR__ . "/../../phpqrcode/qrlib.php");
-
-
-$dueñoId = $_SESSION["id"] ?? null;
+$id = $_SESSION["id"];
+$rol = $_SESSION["rol"];
 $idPerro = $_GET["idPerro"] ?? 0;
 
-if (!$idPerro || !$dueñoId) {
-    exit("Datos inválidos para generar la factura.");
+include("presentacion/encabezado" . ($rol === "dueño" ? "D" : ($rol === "paseador" ? "P" : "A")) . ".php");
+include("presentacion/menu" . ucfirst($rol) . ".php");
+
+if ($rol === "dueño") {
+    $perro = new Perro($idPerro);
+    $perroInfo = $perro->consultarPerroPorId($idPerro);
+    $titulo = $perroInfo ? "Facturas - " . htmlspecialchars($perroInfo->getNombre()) : "Facturas";
+
+    $paseo = new Paseo();
+    $paseos = $paseo->consultarHistorial("dueño", $id);
+    $filtrados = array_filter($paseos, function ($p) use ($idPerro) {
+        return $p->getIdPerro() == $idPerro && trim($p->getEstadoPaseo()) === 'Completado';
+    });
+} else {
+    $titulo = "Facturas - Mis Paseos Completados";
+    $paseo = new Paseo();
+    $paseos = $paseo->consultarHistorial("paseador", $id);
+    $filtrados = array_filter($paseos, function ($p) {
+        return trim($p->getEstadoPaseo()) === 'Completado';
+    });
 }
 
-$dueño = new Dueño($dueñoId);
-$dueño->consultar();
-$nombreDueño = $dueño->getNombre();
-$perro = new Perro($idPerro);
-$perroEncontrado = $perro->consultarPerroPorId($idPerro);
-
-$nombrePerro = "";
-if ($perroEncontrado) {
-    $nombrePerro = $perroEncontrado->getNombre();
-} else {
-    $nombrePerro = "Desconocido";
-}
-$paseo = new Paseo();
-$paseos = $paseo->consultarPaseosCompletadosPorPerro($idPerro);
-
-$pdf = new FPDF();
-$pdf->AddPage();
-$pdf->Image("img/logo.png", 10, 10, 30);
-$pdf->SetY(20);
-$pdf->SetFont("Arial", "B", 18);
-$pdf->SetTextColor(0);
-$pdf->Cell(0, 15, "DoggyToons - Factura de Paseos", 0, 1, "C");
-
-$pdf->Ln(20);
-
-
-if(empty($paseos)) { 
-    $pdf->SetFont("Arial", "B", 14);
-    $pdf->Cell(0, 10, "Perrito: " . $nombrePerro, 0, 1, "L"); 
-    $pdf->Ln(4);
-    $pdf->SetFont("Arial", "B", 12);
-    $pdf->SetFillColor(230, 230, 250);
-    $pdf->Cell(20, 10, "ID", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Fecha", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Hora Ini.", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Hora Fin", 1, 0, 'C', true);
-    $pdf->Cell(50, 10, "Paseador", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Precio", 1, 1, 'C', true);
-    $pdf->SetFont("Arial", "I", 12);
-    $pdf->Ln(10);
-    $pdf->Cell(0, 10, "Este perrito aun no tiene paseos completados para facturar.", 0, 1, "C");
-} else {
-    $pdf->SetFont("Arial", "B", 14);
-    $pdf->Cell(0, 10, "Perrito: " . $nombrePerro, 0, 1, "L"); 
-    $pdf->Ln(4);
-    $pdf->SetFont("Arial", "B", 12);
-    $pdf->SetFillColor(230, 230, 250);
-    $pdf->Cell(20, 10, "ID", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Fecha", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Hora Ini.", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Hora Fin", 1, 0, 'C', true);
-    $pdf->Cell(50, 10, "Paseador", 1, 0, 'C', true);
-    $pdf->Cell(30, 10, "Precio", 1, 1, 'C', true);
-    $pdf->SetFont("Arial", "", 11);
-    
-    $totalPrecio = 0;
-    foreach ($paseos as $paseoItem) {
-        $fechaInicio = new DateTime($paseoItem->getFechaInicio());
-        $fechaFin = new DateTime($paseoItem->getFechaFin());
-        
-        $pdf->Cell(20, 10, $paseoItem->getId(), 1, 0, 'C');
-        $pdf->Cell(30, 10, $fechaInicio->format("Y-m-d"), 1, 0, 'C');
-        $pdf->Cell(30, 10, $fechaInicio->format("H:i"), 1, 0, 'C');
-        $pdf->Cell(30, 10, $fechaFin->format("H:i"), 1, 0, 'C');
-        $pdf->Cell(50, 10, $paseoItem->getPaseador(), 1, 0, 'C');
-        $pdf->Cell(30, 10, "$" . number_format($paseoItem->getPrecio(), 0, '', '.'), 1, 1, 'C');
-        $totalPrecio += $paseoItem->getPrecio();
+$paseosAgrupados = [];
+foreach ($filtrados as $p) {
+    $pid = $p->getId();
+    if (!isset($paseosAgrupados[$pid])) {
+        $paseosAgrupados[$pid] = new stdClass();
+        $paseosAgrupados[$pid]->id = $pid;
+        $paseosAgrupados[$pid]->fechaInicio = $p->getFechaInicio();
+        $paseosAgrupados[$pid]->fechaFin = $p->getFechaFin();
+        $paseosAgrupados[$pid]->perros = [$p->getNombrePerro()];
+        $paseosAgrupados[$pid]->precioHora = (float)$p->getPrecio();
+        if ($rol === "dueño") {
+            $paseosAgrupados[$pid]->paseador = $p->getPaseador();
+        } else {
+            $paseosAgrupados[$pid]->dueno = $p->getDueño();
+        }
+    } else {
+        $paseosAgrupados[$pid]->perros[] = $p->getNombrePerro();
     }
-    
-    $pdf->Ln(5);
-    $pdf->SetFont("Arial", "B", 12);
-    $pdf->Cell(160, 10, "Total a Pagar:", 0, 0, 'R');
-    $pdf->Cell(30, 10, "$" . number_format($totalPrecio, 0, '', '.'), 1, 1, 'C');
 }
-
-$pdf->Ln(10);
-$pdf->SetFont("Arial", "I", 10);
-$pdf->Cell(0, 10, "Gracias por confiar en DoggyToons", 0, 1, "C");
-
-$mensajeQR = "Hola " . ($nombreDueño ? $nombreDueño : "cliente") . ", esta es la factura de tu perrito " . ($nombrePerro ? $nombrePerro : "");
-QRcode::png($mensajeQR, "img/qr.png");
-$anchoQR = 40;
-$pdf->Image("img/qr.png", 165, 10, $anchoQR, $anchoQR);
-
-ob_start();
-$pdf->Output("I", "Factura_" . ($nombrePerro ? $nombrePerro : "sin_nombre") . ".pdf");
-exit();
-
 ?>
+
+<div class="container mt-4">
+    <h3 class="mb-4"><?php echo $titulo; ?></h3>
+
+    <?php if (empty($paseosAgrupados)) { ?>
+        <div class="alert alert-info">No hay paseos completados para facturar.</div>
+    <?php } else { ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Factura #</th>
+                        <th>Fecha</th>
+                        <?php if ($rol === "paseador"): ?><th>Dueño</th><?php endif; ?>
+                        <th>Perro(s)</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Horas</th>
+                        <th>Total</th>
+                        <th>PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($paseosAgrupados as $f):
+                        $fi = new DateTime($f->fechaInicio);
+                        $ff = new DateTime($f->fechaFin);
+                        $diff = $fi->diff($ff);
+                        $minutos = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+                        $horas = max(1, ceil($minutos / 60));
+                        $totalFactura = $horas * $f->precioHora;
+                    ?>
+                        <tr>
+                            <td><?php echo str_pad($f->id, 5, '0', STR_PAD_LEFT); ?></td>
+                            <td><?php echo $fi->format('d/m/Y'); ?></td>
+                            <?php if ($rol === "paseador"): ?>
+                                <td><?php echo htmlspecialchars($f->dueno ?? 'N/A'); ?></td>
+                            <?php endif; ?>
+                            <td><?php echo htmlspecialchars(implode(', ', $f->perros)); ?></td>
+                            <td><?php echo $fi->format('H:i'); ?></td>
+                            <td><?php echo $ff->format('H:i'); ?></td>
+                            <td class="text-center"><?php echo $horas; ?></td>
+                            <td class="text-end">$<?php echo number_format($totalFactura, 0, '', '.'); ?></td>
+                            <td class="text-center">
+                                <a href="presentacion/paseo/generarFactura.php?idPaseo=<?php echo $f->id; ?>"
+                                   target="_blank" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-filetype-pdf"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php } ?>
+</div>

@@ -18,7 +18,7 @@ class AdministradorDAO{
     return "SELECT idAdmin
             FROM admin 
             WHERE Correo = '" . $this->correo . "' 
-              AND Clave = '" . md5($this->clave) . "'";
+              AND (Clave = '" . $this->clave . "' OR Clave = '" . md5($this->clave) . "')";
 }
 
 public function consultar(){

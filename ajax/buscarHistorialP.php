@@ -16,6 +16,7 @@ echo json_encode(array_map(function($paseo) {
     $fechaFin = new DateTime($paseo->getFechaFin());
     return [
         "id" => $paseo->getId(),
+        "idEstado" => $paseo->getIdEstadoPaseo(),
         "fecha" => $fechaInicio->format('Y-m-d'),
         "inicio" => $fechaInicio->format('H:i'),
         "fin" => $fechaFin->format('H:i'),

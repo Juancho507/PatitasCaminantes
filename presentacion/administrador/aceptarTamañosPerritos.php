@@ -37,7 +37,7 @@ $tamaños = $tamanio->consultarTodos();
                                                      ?>
    									 <button class="btn btn-outline-primary btn-sm me-2"
         							id="btnTamaño<?php echo $t->getId() . '_' . $r->getId(); ?>">
-       							 <?php echo $t->getTipo(); ?>
+       							 <?php echo $t->getTamaño(); ?>
   										  </button>
 										<?php endforeach; ?>
 

@@ -16,7 +16,7 @@ if ($nuevoEstado == 2 && !$paseo->puedeAceptarPaseo()) {
 if ($paseo->actualizarEstado($nuevoEstado)) {
     $estado = new EstadoPaseo($nuevoEstado);
     $estado->consultar(); // Este método debe existir
-    echo $estado->getValor();
+    echo $estado->getEstado();
 } else {
     echo "ERROR";
 }

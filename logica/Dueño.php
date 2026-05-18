@@ -1,11 +1,13 @@
 <?php
-require_once ("logica/Persona.php");
-require_once ("persistencia/DueñoDAO.php");
-require_once ("persistencia/Conexion.php");
+require_once(__DIR__ . "/Persona.php");
+require_once(__DIR__ . "/../persistencia/DueñoDAO.php");
+require_once(__DIR__ . "/../persistencia/Conexion.php");
 
 class Dueño extends Persona{
     private $contacto;
     private $foto;
+    private $nroDocumento;
+    private $direccion;
     
     public function getContacto(){
         return $this -> contacto;
@@ -14,10 +16,18 @@ class Dueño extends Persona{
     public function getFoto(){
         return $this -> foto;
     }
-    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "") {
+    public function getNroDocumento(){
+        return $this->nroDocumento;
+    }
+    public function getDireccion(){
+        return $this->direccion;
+    }
+    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "", $nroDocumento = "", $direccion = "") {
         parent::__construct($id, $nombre, $apellido, $correo, $clave);
         $this->contacto = $contacto;
         $this->foto = $foto;
+        $this->nroDocumento = $nroDocumento;
+        $this->direccion = $direccion;
     }
     
     
@@ -31,7 +41,11 @@ class Dueño extends Persona{
             correo: $this -> correo,
             clave: $claveMd5,
             contacto: $this -> contacto,
-            foto: $this -> foto
+            foto: $this -> foto,
+            nroDocumento: $this -> nroDocumento,
+            direccion: $this -> direccion,
+            localidad: 1,
+            adminId: 1
             );
         $conexion -> ejecutar($dueñoDAO -> registrar());
         $conexion->cerrar();

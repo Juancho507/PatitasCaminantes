@@ -1,30 +1,29 @@
 <?php
-require_once ("persistencia/TamañoDAO.php");
-require_once ("persistencia/Conexion.php");
+require_once(__DIR__ . "/../persistencia/TamañoDAO.php");
+require_once(__DIR__ . "/../persistencia/Conexion.php");
 
 class Tamaño{
     private $id;
-    private $tipo;
-    
+    private $nombre;
     
     public function getId(){
         return $this -> id;
     }
     
-    public function getTipo(){
-        return $this -> tipo;
+    public function getTamaño(){
+        return $this -> nombre;
     }
-    public function __construct($id = 0, $tipo = ""){
+    public function __construct($id = 0, $nombre = ""){
         $this -> id = $id;
-        $this -> tipo = $tipo;
+        $this -> nombre = $nombre;
     }
     public function consultar() {
         $conexion = new Conexion();
-        $tamañoDAO = new TamañoDAO($this->id, $this->tipo);
+        $tamañoDAO = new TamañoDAO($this->id, $this->nombre);
         $conexion->abrir();
         $conexion->ejecutar($tamañoDAO->consultar());
         if (($fila = $conexion->registro()) != null) {
-            $this->tipo = $fila[0];
+            $this->nombre = $fila[0];
             $conexion->cerrar();
             return true;
         }

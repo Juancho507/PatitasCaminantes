@@ -35,6 +35,21 @@ function buscarHistorialP() {
                             <th>Perro</th><th>Dueño</th><th>Precio</th><th>Estado</th>
                         </tr></thead><tbody>`;
                 data.forEach(item => {
+                    let estadoBadge = "";
+                    if (item.idEstado === 5) {
+                        estadoBadge = `<span class="badge bg-danger">Cancelado por Dueño</span>`;
+                    } else if (item.idEstado === 6) {
+                        estadoBadge = `<span class="badge bg-warning text-dark">${item.estado}</span>`;
+                    } else if (item.idEstado === 4) {
+                        estadoBadge = `<span class="badge bg-success">${item.estado}</span>`;
+                    } else if (item.idEstado === 2) {
+                        estadoBadge = `<span class="badge bg-primary">${item.estado}</span>`;
+                    } else if (item.idEstado === 1) {
+                        estadoBadge = `<span class="badge bg-secondary">${item.estado}</span>`;
+                    } else {
+                        estadoBadge = `<span class="badge bg-info">${item.estado}</span>`;
+                    }
+
                     html += "<tr>";
                     html += `<td>${resaltar(item.fecha, palabras)}</td>`;
                     html += `<td>${resaltar(item.inicio, palabras)}</td>`;
@@ -42,7 +57,7 @@ function buscarHistorialP() {
                     html += `<td>${resaltar(item.perro, palabras)}</td>`;
                     html += `<td>${resaltar(item.paseador, palabras)}</td>`;
                     html += `<td>$${resaltar(item.precio, palabras)}</td>`;
-                    html += `<td>${resaltar(item.estado, palabras)}</td>`;
+                    html += `<td>${estadoBadge}</td>`;
                     html += "</tr>";
                 });
                 html += "</tbody></table>";

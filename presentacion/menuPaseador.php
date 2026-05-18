@@ -28,6 +28,18 @@ $paseador->consultar();
       </li>
 
       <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/paseador/configurarDisponibilidad.php"); ?>">
+          <i class="fa-solid fa-calendar-week"></i> Disponibilidad
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/paseador/agendaMensual.php"); ?>">
+          <i class="fa-solid fa-calendar-alt"></i> Agenda Mensual
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/paseador/establecerTarifa.php"); ?>">
           <i class="fa-solid fa-dollar-sign"></i> Mi Tarifa
         </a>

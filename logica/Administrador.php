@@ -1,7 +1,7 @@
 <?php
-require_once ("logica/Persona.php");
-require_once ("persistencia/AdministradorDAO.php");
-require_once ("persistencia/Conexion.php");
+require_once(__DIR__ . "/Persona.php");
+require_once(__DIR__ . "/../persistencia/AdministradorDAO.php");
+require_once(__DIR__ . "/../persistencia/Conexion.php");
 
 class Administrador extends Persona{
     public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "" ) {

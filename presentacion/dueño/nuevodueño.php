@@ -14,6 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $correo = $_POST["correo"];
     $clave = $_POST["clave"];
     $contacto = $_POST["contacto"];
+    $nroDocumento = $_POST["nroDocumento"];
+    $direccion = $_POST["direccion"];
     if (isset($_FILES["foto"]) && $_FILES["foto"]["error"] === UPLOAD_ERR_OK) {
         $nombreFotoOriginal = $_FILES["foto"]["name"];
         $rutaTemporal = $_FILES["foto"]["tmp_name"];
@@ -41,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $errorEnSubidaFoto = true;
     }
     if (!$errorEnSubidaFoto) {
-        $dueño = new Dueño("", $nombre, $apellido, $correo, $clave, $contacto, $fotoRuta);
+        $dueño = new Dueño("", $nombre, $apellido, $correo, $clave, $contacto, $fotoRuta, $nroDocumento, $direccion);
         
         if ($dueño->correoExiste()) {
             $correoDuplicado = true;
@@ -73,6 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <h2 class="text-center">Registrar nuevo dueño</h2>
       <form method="POST" enctype="multipart/form-data" autocomplete="off">
         <div class="mb-3">
+          <label class="form-label">Número de Documento</label>
+          <input type="text" name="nroDocumento" class="form-control" autocomplete="off" required>
+        </div>
+
+        <div class="mb-3">
           <label class="form-label">Nombre</label>
           <input type="text" name="nombre" class="form-control" autocomplete="off" required>
         </div>
@@ -95,6 +102,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="mb-3">
           <label class="form-label">Contacto</label>
           <input type="number" name="contacto" class="form-control" autocomplete="off" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Dirección</label>
+          <input type="text" name="direccion" class="form-control" autocomplete="off" required>
         </div>
 
         <div class="mb-3">

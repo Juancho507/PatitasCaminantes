@@ -1,22 +1,22 @@
 <?php
-require_once ("persistencia/TarifaDAO.php");
-require_once ("persistencia/Conexion.php");
+require_once(__DIR__ . "/../persistencia/TarifaDAO.php");
+require_once(__DIR__ . "/../persistencia/Conexion.php");
 
 class Tarifa {
     private $id;
     private $precioHora;
     private $paseadorIdPaseador;
-    private $tamañoIdTamaño; 
-    private $nombreTamaño; 
+    private $peligrosidadIdPeligrosidad; 
+    private $nombrePeligrosidad; 
     private $fechaInicio;
     private $activa;
     
-    public function __construct($id = "", $precioHora = "", $paseadorIdPaseador = "", $tamañoIdTamaño = "", $nombreTamaño = "", $fechaInicio = "", $activa = "") {
+    public function __construct($id = "", $precioHora = "", $paseadorIdPaseador = "", $peligrosidadIdPeligrosidad = "", $nombrePeligrosidad = "", $fechaInicio = "", $activa = "") {
         $this->id = $id;
         $this->precioHora = $precioHora;
         $this->paseadorIdPaseador = $paseadorIdPaseador;
-        $this->tamañoIdTamaño = $tamañoIdTamaño;
-        $this->nombreTamaño = $nombreTamaño;
+        $this->peligrosidadIdPeligrosidad = $peligrosidadIdPeligrosidad;
+        $this->nombrePeligrosidad = $nombrePeligrosidad;
         $this->fechaInicio = $fechaInicio;
         $this->activa = $activa;
         
@@ -34,11 +34,11 @@ class Tarifa {
         return $this->paseadorIdPaseador;
     }
     
-    public function getTamañoIdTamaño() {
-        return $this->tamañoIdTamaño;
+    public function getPeligrosidadIdPeligrosidad() {
+        return $this->peligrosidadIdPeligrosidad;
     }
-    public function getNombreTamaño() { 
-        return $this->nombreTamaño;
+    public function getNombrePeligrosidad() { 
+        return $this->nombrePeligrosidad;
     }
     public function getFechaInicio() {
         return $this->fechaInicio;
@@ -48,7 +48,7 @@ class Tarifa {
     }
     public function desactivarAnterior() {
         $conexion = new Conexion();
-        $tarifaDAO = new TarifaDAO("", "", $this->paseadorIdPaseador, $this->tamañoIdTamaño);
+        $tarifaDAO = new TarifaDAO("", "", $this->paseadorIdPaseador, $this->peligrosidadIdPeligrosidad);
         $conexion->abrir();
         $conexion->ejecutar($tarifaDAO->desactivarAnterior());
         $conexion->cerrar();
@@ -56,7 +56,7 @@ class Tarifa {
     
     public function insertarNueva() {
         $conexion = new Conexion();
-        $tarifaDAO = new TarifaDAO("", $this->precioHora, $this->paseadorIdPaseador, $this->tamañoIdTamaño);
+        $tarifaDAO = new TarifaDAO("", $this->precioHora, $this->paseadorIdPaseador, $this->peligrosidadIdPeligrosidad);
         $conexion->abrir();
         $conexion->ejecutar($tarifaDAO->insertarNueva());
         $conexion->cerrar();

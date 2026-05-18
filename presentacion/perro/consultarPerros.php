@@ -1,13 +1,19 @@
 <?php
 $id = $_SESSION["id"];
 $rol = $_SESSION["rol"];
+$peligrosidadLogica = new Peligrosidad();
+$peligrosidades = $peligrosidadLogica->consultarTodos();
+$mapaPeligrosidad = [];
+foreach ($peligrosidades as $p) {
+    $mapaPeligrosidad[$p->getId()] = $p->getNivel();
+}
 ?>
 <body>
-<?php 
-include("presentacion/encabezadoD.php"); 
-include("presentacion/menu" . ucfirst($rol) . ".php"); 
-$perro = new Perro(); 
-$perros = $perro->consultar($rol, $id); 
+<?php
+include("presentacion/encabezadoD.php");
+include("presentacion/menu" . ucfirst($rol) . ".php");
+$perro = new Perro();
+$perros = $perro->consultar($rol, $id);
 ?>
 <div class="container">
     <div class="row mt-4">
@@ -17,31 +23,39 @@ $perros = $perro->consultar($rol, $id);
                 <div class="card-body">
                     <?php
                     $cantidadPerros = count($perros);
-                    echo "<strong>" . $cantidadPerros . " perro" . ($cantidadPerros !== 1 ? "s" : "") . " encontrado" . ($cantidadPerros !== 1 ? "s" : "") . "</strong><br>";    
-                    
+                    echo "<strong>" . $cantidadPerros . " perro" . ($cantidadPerros !== 1 ? "s" : "") . " encontrado" . ($cantidadPerros !== 1 ? "s" : "") . "</strong><br>";
+
                     if (empty($perros)) {
                         echo "<div class='alert alert-warning mt-3'>No se encontraron perros para mostrar.</div>";
                     } else {
                         echo "<table class='table table-striped table-hover mt-3'>";
-                        echo "<thead><tr><th>Id</th><th>Foto</th><th>Nombre</th><th>Raza</th><th>Tamaño</th><th>Acción</th></tr></thead>";
+                        echo "<thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Tamaño</th><th>Peso</th><th>Peligrosidad</th><th>Activo</th><th>Recomendacion</th><th>Acción</th></tr></thead>";
                         echo "<tbody>";
                         foreach($perros as $perroItem){
-                            echo "<tr>";
-                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getId()) . "</td>"; 
+                            $peligrosidadId = $perroItem->getPeligrosidad();
+                            $peligrosidadNivel = isset($mapaPeligrosidad[$peligrosidadId]) ? $mapaPeligrosidad[$peligrosidadId] : $peligrosidadId;
+                            $activo = $perroItem->getActivo();
+                            echo "<tr id='perro-fila-" . $perroItem->getId() . "'>";
 
                             echo "<td class='align-middle py-3'>";
-                            echo "<div class='d-flex flex-column align-items-start'>";
                             if ($perroItem->getFoto() != "") {
-                                echo "<img src='" . $perroItem->getFoto() . "' width=100' height='100' class='rounded-circle me-3' style='object-fit:cover;' />";                        
+                                echo "<img src='" . $perroItem->getFoto() . "' width='80' height='80' class='rounded-circle' style='object-fit:cover;' />";
                             } else {
-                                echo "<div class='text-muted mb-1'>No hay foto</div>";
+                                echo "<div class='text-muted'>Sin foto</div>";
                             }
-                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getNombre()) . "</td>"; 
-                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getRaza()) . "</td>"; 
-                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getTamaño()) . "</td>"; 
-                            echo "<td class='align-middle py-3'>"; 
-                            echo "<a href='?pid=" . base64_encode("presentacion/perro/editarPerro.php") . "&id=" . htmlspecialchars($perroItem->getId()) . "' class='btn btn-warning btn-sm' style='margin-right: 10px;' >Editar</a>";
-                            echo "<a href='?pid=" . base64_encode("presentacion/perro/eliminarPerro.php") . "&id=" . htmlspecialchars($perroItem->getId()) . "' class='btn btn-danger btn-sm' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este perro?\")'>Eliminar</a> ";   
+                            echo "</td>";
+
+                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getNombre()) . "</td>";
+                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getRaza()) . "</td>";
+                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getTamaño()) . "</td>";
+                            echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getPeso()) . " kg</td>";
+                            echo "<td class='align-middle py-3'><span class='badge bg-" . ($peligrosidadNivel === "PELIGROSO" ? "danger" : ($peligrosidadNivel === "ALTO" ? "warning" : "success")) . "'>" . htmlspecialchars($peligrosidadNivel) . "</span></td>";
+                            echo "<td class='align-middle py-3'><span class='badge bg-" . ($activo == 1 ? "success" : "secondary") . " estado-perro' data-id='" . $perroItem->getId() . "'>" . ($activo == 1 ? "Activo" : "Inactivo") . "</span></td>";
+                            echo "<td class='align-middle py-3'>" . nl2br(htmlspecialchars($perroItem->getRecomendacion())) . "</td>";
+
+                            echo "<td class='align-middle py-3'>";
+                            echo "<a href='?pid=" . base64_encode("presentacion/perro/editarPerro.php") . "&id=" . htmlspecialchars($perroItem->getId()) . "' class='btn btn-warning btn-sm' style='margin-right: 5px;'>Editar</a>";
+                            echo "<button class='btn btn-sm " . ($activo == 1 ? "btn-secondary" : "btn-success") . " btn-toggle-perro' data-id='" . htmlspecialchars($perroItem->getId()) . "' data-activo='" . $activo . "'>" . ($activo == 1 ? "Inactivar" : "Activar") . "</button>";
                             echo "</td>";
                             echo "</tr>";
                         }
@@ -54,5 +68,48 @@ $perros = $perro->consultar($rol, $id);
         </div>
     </div>
 </div>
+<div id="respuestaAjax" class="container mt-2"></div>
+
+<script>
+$(document).ready(function(){
+    $(document).on("click", ".btn-toggle-perro", function(){
+        var btn = $(this);
+        var idPerro = btn.data("id");
+        var activoActual = btn.data("activo");
+        var nuevoActivo = activoActual == 1 ? 0 : 1;
+        var texto = nuevoActivo == 1 ? "activar" : "inactivar";
+
+        if (!confirm("¿Estás seguro de " + texto + " este perro?")) return;
+
+        $.ajax({
+            url: "ajax/togglePerroEstado.php",
+            method: "POST",
+            data: { id: idPerro, activo: nuevoActivo },
+            success: function(response){
+                if (response.trim() === "ok") {
+                    var fila = $("#perro-fila-" + idPerro);
+                    var badge = fila.find(".estado-perro");
+                    badge.text(nuevoActivo == 1 ? "Activo" : "Inactivo")
+                        .removeClass("bg-success bg-secondary")
+                        .addClass(nuevoActivo == 1 ? "bg-success" : "bg-secondary");
+
+                    btn.text(nuevoActivo == 1 ? "Inactivar" : "Activar")
+                        .removeClass("btn-success btn-secondary")
+                        .addClass(nuevoActivo == 1 ? "btn-secondary" : "btn-success");
+                    btn.data("activo", nuevoActivo);
+
+                    $("#respuestaAjax").html('<div class="alert alert-success alert-dismissible fade show">Perro ' + texto + ' correctamente.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                } else {
+                    $("#respuestaAjax").html('<div class="alert alert-danger">Error al cambiar estado.</div>');
+                }
+            },
+            error: function(){
+                $("#respuestaAjax").html('<div class="alert alert-danger">Error de comunicación.</div>');
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>

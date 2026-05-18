@@ -4,19 +4,19 @@ require_once(__DIR__ . "/../persistencia/EstadoPaseoDAO.php");
 
 class EstadoPaseo {
     private $id;
-    private $valor;
+    private $estado;
     
     public function getId(){
         return $this -> id;
     }
     
-    public function getValor(){
-        return $this -> valor;
+    public function getEstado(){
+        return $this -> estado;
     }
     
-    public function __construct($id = 0, $valor = ""){
+    public function __construct($id = 0, $estado = ""){
         $this -> id = $id;
-        $this -> valor = $valor;
+        $this -> estado = $estado;
     }
     
     public function consultarTodos() {
@@ -35,6 +35,20 @@ class EstadoPaseo {
         }
         $conexion->cerrar();
         return $listaEstados;
+    }
+
+    public function consultar() {
+        $estadoPaseoDAO = new EstadoPaseoDAO($this->id);
+        $sentencia = $estadoPaseoDAO->consultarPorId();
+        $conexion = new Conexion();
+        $conexion->abrir();
+        $conexion->ejecutar($sentencia);
+        if ($conexion->filas() > 0) {
+            $registro = $conexion->registro();
+            $this->id = $registro[0];
+            $this->estado = $registro[1];
+        }
+        $conexion->cerrar();
     }
 }
 ?>

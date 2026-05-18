@@ -3,11 +3,11 @@ require_once(__DIR__ . "/../persistencia/EstadisticaDAO.php");
 require_once(__DIR__ . "/../persistencia/Conexion.php");
 
 class Estadistica {
-    public function promedioPreciosPorTamaño() {
+    public function promedioPreciosPorPeligrosidad() {
         $conexion = new Conexion();
         $dao = new EstadisticaDAO();
         $conexion->abrir();
-        $conexion->ejecutar($dao->promedioPreciosPorTamaño());
+        $conexion->ejecutar($dao->promedioPreciosPorPeligrosidad());
         $datos = [];
         while ($fila = $conexion->registro()) {
             $datos[] = $fila;

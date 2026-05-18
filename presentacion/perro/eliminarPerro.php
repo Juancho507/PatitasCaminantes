@@ -12,6 +12,11 @@ if (isset($_GET["id"])) {
     $perro = $perroTemp->consultarPerroPorId($id); 
     
     if ($perro !== null) {
+        if ($perro->tienePaseosActivos()) {
+            echo "<div class='alert alert-danger'>No se puede eliminar el perro porque tiene paseos activos.</div>";
+            exit();
+        }
+        
         if ($perro->getFoto() != "" && file_exists($perro->getFoto())) {
             unlink($perro->getFoto());
         }

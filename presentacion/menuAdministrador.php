@@ -3,6 +3,7 @@
 $id = $_SESSION["id"];
 $administrador = new Administrador($id);
 $administrador->consultar();
+
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
   <a class="navbar-brand" href="?pid=<?php echo base64_encode("presentacion/sesionAdministrador.php"); ?>">
@@ -23,25 +24,35 @@ $administrador->consultar();
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/editarAdministrador.php") ?>">
-          <i class="fa-solid fa-user-pen"></i> Editar Datos
-        </a>
-      </li>
-      
-       <li class="nav-item">
-        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/aceptarTamañosPerritos.php"); ?>">
-          <i class="fa-solid fa-dog"></i> Perritos
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/dashboard.php"); ?>">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
         </a>
       </li>
 
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="paseadoresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fa-solid fa-person-walking"></i> Paseadores
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/gestionarDueños.php"); ?>">
+          <i class="fa-solid fa-users"></i> Gestionar Dueños
         </a>
-        <ul class="dropdown-menu" aria-labelledby="paseadoresDropdown">
-          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseador/gestionarPaseadores.php"); ?>">Gestionar Paseadores</a></li>
-          <li><a class="dropdown-item" href="?pid=<?php echo base64_encode("presentacion/paseador/registrarPaseador.php") ?>">Registrar Paseador</a></li>
-        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/verAspirantes.php"); ?>">
+          <i class="fa-solid fa-person-walking"></i> Ver Aspirantes
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/solicitudesRaza.php"); ?>">
+          <i class="fa-solid fa-paw"></i> Solicitudes de Raza
+        </a>
+      </li>
+
+
+
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/aceptarTamañosPerritos.php"); ?>">
+          <i class="fa-solid fa-dog"></i> Perritos
+        </a>
       </li>
 
       <li class="nav-item">
@@ -49,13 +60,14 @@ $administrador->consultar();
           <i class="fa-solid fa-chart-line"></i> Estadísticas
         </a>
       </li>
+
     </ul>
 
     <ul class="navbar-nav mb-2 mb-lg-0">
       <li class="nav-item">
-        <span class="navbar-text text-white me-3">
-          <?php echo $administrador->getNombre() . " " . $administrador->getApellido(); ?>
-        </span>
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/editarAdministrador.php") ?>">
+          <i class="fa-solid fa-user-pen"></i> <?php echo $administrador->getNombre() . " " . $administrador->getApellido(); ?>
+        </a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-danger" href="?pid=<?php echo base64_encode("presentacion/autenticarse.php") ?>&sesion=false">

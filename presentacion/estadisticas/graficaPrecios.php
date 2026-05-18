@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . "/../../logica/Estadistica.php");
 $estadistica = new Estadistica();
-$datos = $estadistica->promedioPreciosPorTamaño();
+$datos = $estadistica->promedioPreciosPorPeligrosidad();
 ?>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -10,14 +10,14 @@ google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
 function drawChart() {
     var data = google.visualization.arrayToDataTable([
-        ['Tamaño', 'Precio Promedio'],
+        ['Peligrosidad', 'Precio Promedio'],
         <?php foreach ($datos as $d): ?>
             ['<?= $d[0] ?>', <?= $d[1] ?>],
         <?php endforeach; ?>
     ]);
 
     var options = {
-        title: 'Precios promedio por tamaño',
+        title: 'Precios promedio por nivel de peligrosidad',
         curveType: 'function',
         legend: { position: 'bottom' }
     };
