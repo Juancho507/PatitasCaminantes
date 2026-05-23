@@ -585,6 +585,109 @@ ALTER TABLE `tamaño`
 --
 ALTER TABLE `tarifa`
   ADD PRIMARY KEY (`idTarifa`);
+
+--
+-- Indices para `localidad`
+--
+ALTER TABLE `localidad`
+  ADD KEY `fk_localidad_ciudad1_idx` (`Ciudad_idCiudad`);
+
+--
+-- Indices para `paseador`
+--
+ALTER TABLE `paseador`
+  ADD KEY `fk_paseador_estado1_idx` (`Estado_idEstado`),
+  ADD KEY `fk_paseador_admin1_idx` (`Admin_idAdmin`),
+  ADD KEY `fk_paseador_localidad1_idx` (`Localidad_idLocalidad`);
+
+--
+-- Indices para `paseo`
+--
+ALTER TABLE `paseo`
+  ADD KEY `fk_paseo_paseador1_idx` (`Paseador_idPaseador`),
+  ADD KEY `fk_paseo_estado1_idx` (`Estado_idEstado`),
+  ADD KEY `fk_paseo_perro1_idx` (`perro_idPerro`),
+  ADD KEY `fk_paseo_perro2_idx` (`perro_idPerro2`),
+  ADD KEY `fk_paseo_perro3_idx` (`perro_idPerro3`),
+  ADD KEY `fk_paseo_perro4_idx` (`perro_idPerro4`),
+  ADD KEY `fk_paseo_perro5_idx` (`perro_idPerro5`),
+  ADD KEY `fk_paseo_perro6_idx` (`perro_idPerro6`);
+
+--
+-- Indices para `perro`
+--
+ALTER TABLE `perro`
+  ADD KEY `fk_perro_estado1_idx` (`Estado_idEstado`),
+  ADD KEY `fk_perro_raza1_idx` (`Raza_idRaza`),
+  ADD KEY `fk_perro_dueño1_idx` (`Dueño_idDueño`),
+  ADD KEY `fk_perro_peligrosidad1_idx` (`Peligrosidad_idPeligrosidad`);
+
+--
+-- Indices para `raza`
+--
+ALTER TABLE `raza`
+  ADD KEY `fk_raza_tamaño1_idx` (`Tamaño_idTamaño`);
+
+--
+-- Indices para `solicitudraza`
+--
+ALTER TABLE `solicitudraza`
+  ADD KEY `fk_solicitudraza_dueño_idx` (`idDueño`),
+  ADD KEY `fk_solicitudraza_estado1_idx` (`Estado_idEstado`);
+
+--
+-- Indices para `tarifa`
+--
+ALTER TABLE `tarifa`
+  ADD KEY `fk_tarifa_paseador1_idx` (`Paseador_idPaseador`),
+  ADD KEY `fk_tarifa_peligrosidad1_idx` (`Peligrosidad_idPeligrosidad`);
+
+--
+-- Restricciones FOREIGN KEY
+--
+ALTER TABLE `disponibilidad`
+  ADD CONSTRAINT `fk_Disponibilidad_paseador1` FOREIGN KEY (`paseador_idPaseador`) REFERENCES `paseador` (`idPaseador`),
+  ADD CONSTRAINT `fk_Disponibilidad_diasemana1` FOREIGN KEY (`DiaSemana_idDiaSemana`) REFERENCES `diasemana` (`idDiaSemana`);
+
+ALTER TABLE `dueño`
+  ADD CONSTRAINT `fk_dueño_estado1` FOREIGN KEY (`Estado_idEstado`) REFERENCES `estado` (`idEstado`),
+  ADD CONSTRAINT `fk_dueño_localidad1` FOREIGN KEY (`Localidad_idLocalidad`) REFERENCES `localidad` (`idLocalidad`),
+  ADD CONSTRAINT `fk_dueño_admin1` FOREIGN KEY (`admin_idAdmin`) REFERENCES `admin` (`idAdmin`);
+
+ALTER TABLE `localidad`
+  ADD CONSTRAINT `fk_localidad_ciudad1` FOREIGN KEY (`Ciudad_idCiudad`) REFERENCES `ciudad` (`idCiudad`);
+
+ALTER TABLE `paseador`
+  ADD CONSTRAINT `fk_paseador_estado1` FOREIGN KEY (`Estado_idEstado`) REFERENCES `estado` (`idEstado`),
+  ADD CONSTRAINT `fk_paseador_admin1` FOREIGN KEY (`Admin_idAdmin`) REFERENCES `admin` (`idAdmin`),
+  ADD CONSTRAINT `fk_paseador_localidad1` FOREIGN KEY (`Localidad_idLocalidad`) REFERENCES `localidad` (`idLocalidad`);
+
+ALTER TABLE `paseo`
+  ADD CONSTRAINT `fk_paseo_paseador1` FOREIGN KEY (`Paseador_idPaseador`) REFERENCES `paseador` (`idPaseador`),
+  ADD CONSTRAINT `fk_paseo_estado1` FOREIGN KEY (`Estado_idEstado`) REFERENCES `estado` (`idEstado`),
+  ADD CONSTRAINT `fk_paseo_perro1` FOREIGN KEY (`perro_idPerro`) REFERENCES `perro` (`idPerro`),
+  ADD CONSTRAINT `fk_paseo_perro2` FOREIGN KEY (`perro_idPerro2`) REFERENCES `perro` (`idPerro`),
+  ADD CONSTRAINT `fk_paseo_perro3` FOREIGN KEY (`perro_idPerro3`) REFERENCES `perro` (`idPerro`),
+  ADD CONSTRAINT `fk_paseo_perro4` FOREIGN KEY (`perro_idPerro4`) REFERENCES `perro` (`idPerro`),
+  ADD CONSTRAINT `fk_paseo_perro5` FOREIGN KEY (`perro_idPerro5`) REFERENCES `perro` (`idPerro`),
+  ADD CONSTRAINT `fk_paseo_perro6` FOREIGN KEY (`perro_idPerro6`) REFERENCES `perro` (`idPerro`);
+
+ALTER TABLE `perro`
+  ADD CONSTRAINT `fk_perro_estado1` FOREIGN KEY (`Estado_idEstado`) REFERENCES `estado` (`idEstado`),
+  ADD CONSTRAINT `fk_perro_raza1` FOREIGN KEY (`Raza_idRaza`) REFERENCES `raza` (`idRaza`),
+  ADD CONSTRAINT `fk_perro_dueño1` FOREIGN KEY (`Dueño_idDueño`) REFERENCES `dueño` (`idDueño`),
+  ADD CONSTRAINT `fk_perro_peligrosidad1` FOREIGN KEY (`Peligrosidad_idPeligrosidad`) REFERENCES `peligrosidad` (`idPeligrosidad`);
+
+ALTER TABLE `raza`
+  ADD CONSTRAINT `fk_raza_tamaño1` FOREIGN KEY (`Tamaño_idTamaño`) REFERENCES `tamaño` (`idTamaño`);
+
+ALTER TABLE `solicitudraza`
+  ADD CONSTRAINT `fk_solicitudraza_dueño` FOREIGN KEY (`idDueño`) REFERENCES `dueño` (`idDueño`),
+  ADD CONSTRAINT `fk_solicitudraza_estado1` FOREIGN KEY (`Estado_idEstado`) REFERENCES `estado` (`idEstado`);
+
+ALTER TABLE `tarifa`
+  ADD CONSTRAINT `fk_tarifa_paseador1` FOREIGN KEY (`Paseador_idPaseador`) REFERENCES `paseador` (`idPaseador`),
+  ADD CONSTRAINT `fk_tarifa_peligrosidad1` FOREIGN KEY (`Peligrosidad_idPeligrosidad`) REFERENCES `peligrosidad` (`idPeligrosidad`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
