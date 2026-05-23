@@ -51,7 +51,7 @@ $conexion->ejecutar("SELECT p.idPaseo, p.FechaInicio, p.FechaFin,
     LEFT JOIN Perro per5 ON p.perro_idPerro5 = per5.idPerro
     LEFT JOIN Perro per6 ON p.perro_idPerro6 = per6.idPerro
     JOIN Dueño due ON per1.Dueño_idDueño = due.idDueño
-    WHERE p.Paseador_idPaseador = $id AND p.EstadoPaseo_idEstadoPaseo = 2
+    WHERE p.Paseador_idPaseador = $id AND p.Estado_idEstado = 2
     ORDER BY p.FechaInicio ASC");
 while ($row = $conexion->registro()) {
     $paseosAceptados[] = [
@@ -194,6 +194,10 @@ $(document).ready(function() {
                     mostrarNotificacion("danger", res.mensaje);
                     btn.prop("disabled", false).html('<i class="fa-solid fa-check"></i> Aceptar');
                 }
+            },
+            error: function(xhr, status, error) {
+                mostrarNotificacion("danger", "Error de conexión: " + error);
+                btn.prop("disabled", false).html('<i class="fa-solid fa-check"></i> Aceptar');
             }
         });
     });
@@ -221,6 +225,10 @@ $(document).ready(function() {
                     mostrarNotificacion("danger", res.mensaje);
                     btn.prop("disabled", false).html("Confirmar");
                 }
+            },
+            error: function(xhr, status, error) {
+                mostrarNotificacion("danger", "Error de conexión: " + error);
+                btn.prop("disabled", false).html("Confirmar");
             }
         });
     });
@@ -243,6 +251,10 @@ $(document).ready(function() {
                     mostrarNotificacion2("danger", res.mensaje);
                     btn.prop("disabled", false).html('<i class="fa-solid fa-flag-checkered"></i> Completar Paseo');
                 }
+            },
+            error: function(xhr, status, error) {
+                mostrarNotificacion2("danger", "Error de conexión: " + error);
+                btn.prop("disabled", false).html('<i class="fa-solid fa-flag-checkered"></i> Completar Paseo');
             }
         });
     });
@@ -265,6 +277,10 @@ $(document).ready(function() {
                     mostrarNotificacion2("danger", res.mensaje);
                     btn.prop("disabled", false).html('<i class="fa-solid fa-ban"></i> Cancelar Paseo');
                 }
+            },
+            error: function(xhr, status, error) {
+                mostrarNotificacion2("danger", "Error de conexión: " + error);
+                btn.prop("disabled", false).html('<i class="fa-solid fa-ban"></i> Cancelar Paseo');
             }
         });
     });

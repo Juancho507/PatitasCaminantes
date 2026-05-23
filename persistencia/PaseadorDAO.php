@@ -14,8 +14,9 @@ class PaseadorDAO{
     private $localidad_id;
     private $hojaDeVida;
     private $certificado;
+    private $aprobadoPeligroso;
 
-    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "", $informacion = "", $estadoId = 2, $nroDocumento = "", $fechaNacimiento = "", $localidad_id = 0, $hojaDeVida = "", $certificado = ""){
+    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "", $informacion = "", $estadoId = 1, $nroDocumento = "", $fechaNacimiento = "", $localidad_id = 0, $hojaDeVida = "", $certificado = "", $aprobadoPeligroso = 0){
         $this->id = $id;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
@@ -30,6 +31,7 @@ class PaseadorDAO{
         $this->localidad_id = $localidad_id;
         $this->hojaDeVida = $hojaDeVida;
         $this->certificado = $certificado;
+        $this->aprobadoPeligroso = $aprobadoPeligroso;
     }
 
    public function autenticarse(){
@@ -54,22 +56,28 @@ public function registrar() {
                 )";
     }
 public function consultar(){
-    return "SELECT Nombre, Apellido, Correo, Clave, Contacto, Foto, Informacion, Estado_idEstado, NroDocumento, FechaNacimiento
-            FROM Paseador
-            WHERE idPaseador = '" . $this->id . "'";
+    return "SELECT p.Nombre, p.Apellido, p.Correo, p.Clave, p.Contacto, p.Foto, p.Informacion, p.Estado_idEstado, p.NroDocumento, p.FechaNacimiento, p.Localidad_idLocalidad, l.Localidad, c.Ciudad, p.HojaDeVida, p.Certificados, p.AprobadoPeligroso
+            FROM Paseador p
+            LEFT JOIN Localidad l ON p.Localidad_idLocalidad = l.idLocalidad
+            LEFT JOIN Ciudad c ON l.Ciudad_idCiudad = c.idCiudad
+            WHERE p.idPaseador = '" . $this->id . "'";
 }
 
 public function consultarTodos() {
     return "SELECT idPaseador, nombre, apellido, correo, contacto, Estado_idEstado FROM Paseador";
 }
 
-public function consultarActivos() {
-    return "SELECT idPaseador, Nombre, Apellido, Correo, Contacto, Foto, Informacion, Estado_idEstado
+public function consultarActivos($localidadId = 0, $soloPeligroso = false) {
+    $filter = $localidadId > 0 ? "AND Localidad_idLocalidad = $localidadId" : "";
+    $peligrosoFilter = $soloPeligroso ? "AND AprobadoPeligroso = 1" : "";
+    return "SELECT idPaseador, Nombre, Apellido, Correo, Contacto, Foto, Informacion, Estado_idEstado, AprobadoPeligroso
             FROM Paseador
-            WHERE Estado_idEstado = 2";
+            WHERE Estado_idEstado = 2 $filter $peligrosoFilter";
 }
 
 public function actualizar(){
+    $localidad = $this->localidad_id > 0 ? $this->localidad_id : "NULL";
+    $cert = $this->certificado !== "" ? "'" . $this->certificado . "'" : "NULL";
     return "UPDATE Paseador SET
         Nombre = '" . $this->nombre . "',
         Apellido = '" . $this->apellido . "',
@@ -77,12 +85,19 @@ public function actualizar(){
         Clave = '" . $this->clave . "',
         Contacto = '" . $this->contacto . "',
         Foto = '" . $this->foto . "',
-        Informacion = '" . $this->informacion . "'
+        Informacion = '" . $this->informacion . "',
+        Localidad_idLocalidad = $localidad,
+        Certificados = COALESCE($cert, Certificados),
+        AprobadoPeligroso = $this->aprobadoPeligroso
         WHERE idPaseador = " . $this->id;
 }
 
 public function actualizarEstado() {
     return "UPDATE Paseador SET Estado_idEstado = " . $this->estadoId . " WHERE idPaseador = " . $this->id;
+}
+
+public function actualizarAprobacionPeligroso() {
+    return "UPDATE Paseador SET AprobadoPeligroso = $this->aprobadoPeligroso WHERE idPaseador = " . $this->id;
 }
 
 public function correoExiste() {

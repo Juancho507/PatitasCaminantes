@@ -249,7 +249,7 @@ class Perro{
         $id = (int)$this->id;
         $conexion->ejecutar("SELECT COUNT(*) FROM Paseo p
                              WHERE (p.perro_idPerro = $id OR p.perro_idPerro2 = $id OR p.perro_idPerro3 = $id OR p.perro_idPerro4 = $id OR p.perro_idPerro5 = $id OR p.perro_idPerro6 = $id)
-                             AND p.EstadoPaseo_idEstadoPaseo IN (1,2,3)
+                             AND p.Estado_idEstado IN (1,2,5)
                              AND p.FechaInicio > NOW()");
         $fila = $conexion->registro();
         $tiene = $fila && $fila[0] > 0;

@@ -6,8 +6,12 @@ $rol = $_SESSION["rol"];
 <?php 
 include("presentacion/encabezadoD.php"); 
 include("presentacion/menu" . ucfirst($rol) . ".php"); 
+$dueñoLocalidad = new Dueño($id);
+$dueñoLocalidad->consultar();
+$localidadId = $dueñoLocalidad->getLocalidadId();
+
 $paseador = new Paseador();
-$lista = $paseador->consultarActivos(); 
+$lista = $paseador->consultarActivos($localidadId); 
 ?>
 
 <div class="container mt-4">
@@ -35,6 +39,13 @@ $lista = $paseador->consultarActivos();
                         <p><strong>Correo:</strong> <?php echo htmlspecialchars($p->getCorreo()); ?></p>
                         <p><strong>Contacto:</strong> <?php echo htmlspecialchars($p->getContacto()); ?></p>
                         <p><strong>Descripción:</strong> <?php echo htmlspecialchars($p->getInformacion()); ?></p>
+                        <p><strong>Perros peligrosos:</strong>
+                            <?php if ($p->getAprobadoPeligroso()): ?>
+                                <span class="badge bg-success">Sí</span>
+                            <?php else: ?>
+                                <span class="badge bg-secondary">No</span>
+                            <?php endif; ?>
+                        </p>
                          <?php
                         $tarifas = $p->getTarifas();
                         if (!empty($tarifas)) {

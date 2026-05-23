@@ -85,7 +85,7 @@ try {
 
         $horas = [];
 
-        $conexion->ejecutar("SELECT FechaInicio, FechaFin FROM paseo WHERE Paseador_idPaseador = $idPaseador AND EstadoPaseo_idEstadoPaseo IN (1,2) AND DATE(FechaInicio) = '$fechaStr'");
+        $conexion->ejecutar("SELECT FechaInicio, FechaFin FROM paseo WHERE Paseador_idPaseador = $idPaseador AND Estado_idEstado IN (1,2) AND DATE(FechaInicio) = '$fechaStr'");
         $paseosExistentes = [];
         while ($fila = $conexion->registro()) {
             $paseosExistentes[] = ["inicio" => $fila[0], "fin" => $fila[1]];

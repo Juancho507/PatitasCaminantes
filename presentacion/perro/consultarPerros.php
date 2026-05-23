@@ -35,6 +35,7 @@ $perros = $perro->consultar($rol, $id);
                             $peligrosidadId = $perroItem->getPeligrosidad();
                             $peligrosidadNivel = isset($mapaPeligrosidad[$peligrosidadId]) ? $mapaPeligrosidad[$peligrosidadId] : $peligrosidadId;
                             $activo = $perroItem->getActivo();
+                            $esActivo = ($activo == 2);
                             echo "<tr id='perro-fila-" . $perroItem->getId() . "'>";
 
                             echo "<td class='align-middle py-3'>";
@@ -50,12 +51,12 @@ $perros = $perro->consultar($rol, $id);
                             echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getTamaño()) . "</td>";
                             echo "<td class='align-middle py-3'>" . htmlspecialchars($perroItem->getPeso()) . " kg</td>";
                             echo "<td class='align-middle py-3'><span class='badge bg-" . ($peligrosidadNivel === "PELIGROSO" ? "danger" : ($peligrosidadNivel === "ALTO" ? "warning" : "success")) . "'>" . htmlspecialchars($peligrosidadNivel) . "</span></td>";
-                            echo "<td class='align-middle py-3'><span class='badge bg-" . ($activo == 1 ? "success" : "secondary") . " estado-perro' data-id='" . $perroItem->getId() . "'>" . ($activo == 1 ? "Activo" : "Inactivo") . "</span></td>";
+                            echo "<td class='align-middle py-3'><span class='badge bg-" . ($esActivo ? "success" : "secondary") . " estado-perro' data-id='" . $perroItem->getId() . "'>" . ($esActivo ? "Activo" : "Inactivo") . "</span></td>";
                             echo "<td class='align-middle py-3'>" . nl2br(htmlspecialchars($perroItem->getRecomendacion())) . "</td>";
 
                             echo "<td class='align-middle py-3'>";
                             echo "<a href='?pid=" . base64_encode("presentacion/perro/editarPerro.php") . "&id=" . htmlspecialchars($perroItem->getId()) . "' class='btn btn-warning btn-sm' style='margin-right: 5px;'>Editar</a>";
-                            echo "<button class='btn btn-sm " . ($activo == 1 ? "btn-secondary" : "btn-success") . " btn-toggle-perro' data-id='" . htmlspecialchars($perroItem->getId()) . "' data-activo='" . $activo . "'>" . ($activo == 1 ? "Inactivar" : "Activar") . "</button>";
+                            echo "<button class='btn btn-sm " . ($esActivo ? "btn-secondary" : "btn-success") . " btn-toggle-perro' data-id='" . htmlspecialchars($perroItem->getId()) . "' data-activo='" . $activo . "'>" . ($esActivo ? "Inactivar" : "Activar") . "</button>";
                             echo "</td>";
                             echo "</tr>";
                         }
@@ -76,8 +77,8 @@ $(document).ready(function(){
         var btn = $(this);
         var idPerro = btn.data("id");
         var activoActual = btn.data("activo");
-        var nuevoActivo = activoActual == 1 ? 0 : 1;
-        var texto = nuevoActivo == 1 ? "activar" : "inactivar";
+        var nuevoActivo = activoActual == 2 ? 4 : 2;
+        var texto = nuevoActivo == 2 ? "activar" : "inactivar";
 
         if (!confirm("¿Estás seguro de " + texto + " este perro?")) return;
 
@@ -89,13 +90,13 @@ $(document).ready(function(){
                 if (response.trim() === "ok") {
                     var fila = $("#perro-fila-" + idPerro);
                     var badge = fila.find(".estado-perro");
-                    badge.text(nuevoActivo == 1 ? "Activo" : "Inactivo")
+                    badge.text(nuevoActivo == 2 ? "Activo" : "Inactivo")
                         .removeClass("bg-success bg-secondary")
-                        .addClass(nuevoActivo == 1 ? "bg-success" : "bg-secondary");
+                        .addClass(nuevoActivo == 2 ? "bg-success" : "bg-secondary");
 
-                    btn.text(nuevoActivo == 1 ? "Inactivar" : "Activar")
+                    btn.text(nuevoActivo == 2 ? "Inactivar" : "Activar")
                         .removeClass("btn-success btn-secondary")
-                        .addClass(nuevoActivo == 1 ? "btn-secondary" : "btn-success");
+                        .addClass(nuevoActivo == 2 ? "btn-secondary" : "btn-success");
                     btn.data("activo", nuevoActivo);
 
                     $("#respuestaAjax").html('<div class="alert alert-success alert-dismissible fade show">Perro ' + texto + ' correctamente.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');

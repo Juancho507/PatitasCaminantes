@@ -35,13 +35,13 @@ if (
 
             $conexion->ejecutar("INSERT INTO Raza (Raza, Tamaño_idTamaño) VALUES ('{$nombreSeguro} Hembra', $tamañoId)");
             $conexion->ejecutar("INSERT INTO Raza (Raza, Tamaño_idTamaño) VALUES ('{$nombreSeguro} Masculino', $tamañoId)");
-            $conexion->ejecutar("UPDATE solicitudraza SET EstadoSolicitud_idEstadoSolicitud = 2 WHERE idSolicitud = $id");
+            $conexion->ejecutar("UPDATE solicitudraza SET Estado_idEstado = 2 WHERE idSolicitud = $id");
             echo "ok";
         } else {
             echo "notfound";
         }
     } elseif ($accion === "rechazar") {
-        $conexion->ejecutar("UPDATE solicitudraza SET EstadoSolicitud_idEstadoSolicitud = 3 WHERE idSolicitud = $id");
+        $conexion->ejecutar("UPDATE solicitudraza SET Estado_idEstado = 3 WHERE idSolicitud = $id");
         echo "ok";
     } else {
         echo "invalid";

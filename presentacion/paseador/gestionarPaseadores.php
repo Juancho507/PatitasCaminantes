@@ -32,15 +32,15 @@ $lista = $paseador->consultarTodos();
           <td class="correo"><?= htmlspecialchars($p->getCorreo()) ?></td>
           <td class="contacto"><?= htmlspecialchars($p->getContacto()) ?></td>
           <td>
-            <span class="badge bg-<?= $p->getActivo() == 1 ? 'success' : 'danger'; ?>" id="estado-<?= $p->getId(); ?>">
-              <?= $p->getActivo() == 1 ? 'Activo' : 'Inactivo'; ?>
+            <span class="badge bg-<?= $p->getEstadoId() == 2 ? 'success' : 'danger'; ?>" id="estado-<?= $p->getId(); ?>">
+              <?= $p->getEstadoId() == 2 ? 'Activo' : 'Inactivo'; ?>
             </span>
           </td>
           <td>
-            <button class="btn btn-sm btn-<?= $p->getActivo() == 1 ? 'danger' : 'success'; ?> toggle-estado"
+            <button class="btn btn-sm btn-<?= $p->getEstadoId() == 2 ? 'danger' : 'success'; ?> toggle-estado"
                     data-id="<?= $p->getId(); ?>" 
-                    data-estado="<?= $p->getActivo(); ?>">
-              <?= $p->getActivo() == 1 ? 'Deshabilitar' : 'Habilitar'; ?>
+                    data-estado="<?= $p->getEstadoId(); ?>">
+              <?= $p->getEstadoId() == 2 ? 'Deshabilitar' : 'Habilitar'; ?>
             </button>
           </td>
         </tr>
@@ -93,7 +93,7 @@ $(document).on("click", ".toggle-estado", function () {
   const btn = $(this);
   const id = btn.data("id");
   const estadoActual = btn.data("estado");
-  const nuevoEstado = estadoActual == 1 ? 0 : 1;
+  const nuevoEstado = estadoActual == 2 ? 4 : 2;
 
   $.ajax({
     url: "ajax/paseadorEstadoAjax.php",
@@ -104,11 +104,11 @@ $(document).on("click", ".toggle-estado", function () {
         const fila = btn.closest("tr");
         const estadoSpan = fila.find("span[id^='estado-']");
 
-        estadoSpan.text(nuevoEstado == 1 ? "Activo" : "Inactivo")
+        estadoSpan.text(nuevoEstado == 2 ? "Activo" : "Inactivo")
           .removeClass("bg-success bg-danger")
           .addClass(nuevoEstado == 1 ? "bg-success" : "bg-danger");
 
-        btn.text(nuevoEstado == 1 ? "Deshabilitar" : "Habilitar")
+        btn.text(nuevoEstado == 2 ? "Deshabilitar" : "Habilitar")
           .removeClass("btn-success btn-danger")
           .addClass(nuevoEstado == 1 ? "btn-danger" : "btn-success");
 

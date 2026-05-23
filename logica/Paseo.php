@@ -288,14 +288,96 @@ public function puedeAceptarPaseo() {
 
     $fechaInicio = $registro[0];
     $idPaseador = $registro[1];
+
     $conexion->ejecutar($paseoDAO->contarAceptadosEnRango($idPaseador, $fechaInicio));
     $resultado = $conexion->registro();
+    if ($resultado[0] >= 2) {
+        $conexion->cerrar();
+        return false;
+    }
     $conexion->cerrar();
 
-    return $resultado[0] < 2;
+    $perrosPaseo = [];
+    $conexion2 = new Conexion();
+    $conexion2->abrir();
+    $conexion2->ejecutar("SELECT perro_idPerro, perro_idPerro2, perro_idPerro3, perro_idPerro4, perro_idPerro5, perro_idPerro6 FROM Paseo WHERE idPaseo = $this->id");
+    if ($fila = $conexion2->registro()) {
+        for ($i = 0; $i <= 5; $i++) {
+            $val = (int)$fila[$i];
+            if ($val > 0) $perrosPaseo[] = $val;
+        }
+    }
+    $conexion2->cerrar();
+
+    $resultado = self::validarCapacidadConcurrente($idPaseador, $fechaInicio, $perrosPaseo, $this->id, false);
+    return $resultado["valido"];
 }
 
     
+    public static function validarCapacidadConcurrente($idPaseador, $fechaInicio, $nuevosIdsPerros, $excluirIdPaseo = 0, $incluirPendientes = false) {
+        $conexion = new Conexion();
+        $conexion->abrir();
+
+        $estados = $incluirPendientes ? "IN (1,2)" : "= 2";
+        $excluir = $excluirIdPaseo > 0 ? "AND idPaseo != $excluirIdPaseo" : "";
+        $conexion->ejecutar("SELECT perro_idPerro, perro_idPerro2, perro_idPerro3, perro_idPerro4, perro_idPerro5, perro_idPerro6
+                             FROM Paseo
+                             WHERE Paseador_idPaseador = $idPaseador
+                               AND Estado_idEstado $estados
+                               AND TIMESTAMPDIFF(MINUTE, '$fechaInicio', FechaInicio) BETWEEN -59 AND 59
+                               $excluir");
+
+        $todosIds = $nuevosIdsPerros;
+        while ($fila = $conexion->registro()) {
+            for ($i = 0; $i <= 5; $i++) {
+                $val = (int)$fila[$i];
+                if ($val > 0) $todosIds[] = $val;
+            }
+        }
+        $conexion->cerrar();
+
+        $total = count($todosIds);
+        if ($total > 5) {
+            return ["valido" => false, "mensaje" => "Límite absoluto de 5 perros excedido en este horario.", "total" => $total, "limite" => 5];
+        }
+
+        $idsUnicos = [];
+        foreach ($todosIds as $v) {
+            if ($v > 0) $idsUnicos[$v] = true;
+        }
+        $idsUnicos = array_keys($idsUnicos);
+
+
+        $idsStr = implode(",", $idsUnicos);
+        $conexion2 = new Conexion();
+        $conexion2->abrir();
+        $conexion2->ejecutar("SELECT DISTINCT pg.Nivel FROM Perro p
+                              INNER JOIN Peligrosidad pg ON p.Peligrosidad_idPeligrosidad = pg.idPeligrosidad
+                              WHERE p.idPerro IN ($idsStr)");
+
+        $jerarquia = ["BAJO" => 1, "MEDIO" => 2, "ALTO" => 3, "PELIGROSO" => 4];
+        $limiteMap = ["BAJO" => 5, "MEDIO" => 3, "ALTO" => 2, "PELIGROSO" => 1];
+        $maxNivel = "BAJO";
+        $maxInt = 0;
+        while ($fila = $conexion2->registro()) {
+            $nivel = strtoupper($fila[0]);
+            if (($jerarquia[$nivel] ?? 0) > $maxInt) {
+                $maxInt = $jerarquia[$nivel];
+                $maxNivel = $nivel;
+            }
+        }
+        $conexion2->cerrar();
+
+        $limite = $limiteMap[$maxNivel];
+        $nivelStr = ucfirst(strtolower($maxNivel));
+
+        if ($total > $limite) {
+            return ["valido" => false, "mensaje" => "Ya tienes paseos con nivel $nivelStr en este horario (máx. $limite perros, total $total).", "total" => $total, "limite" => $limite];
+        }
+
+        return ["valido" => true, "mensaje" => "Capacidad suficiente.", "total" => $total, "limite" => $limite];
+    }
+
     public function consultarPaseosCompletadosPorPerro($idPerro) {
         $paseos = [];
         

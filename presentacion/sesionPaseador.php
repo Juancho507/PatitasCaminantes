@@ -38,6 +38,14 @@ $paseador ->consultar();
                 <td><?php echo $paseador->getApellido(); ?></td>
               </tr>
               <tr>
+                <th>Documento</th>
+                <td><?php echo htmlspecialchars($paseador->getNroDocumento() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
+                <th>Fecha Nacimiento</th>
+                <td><?php echo $paseador->getFechaNacimiento() ? date('d/m/Y', strtotime($paseador->getFechaNacimiento())) : 'N/A'; ?></td>
+              </tr>
+              <tr>
                 <th>Correo</th>
                 <td><?php echo $paseador->getCorreo(); ?></td>
               </tr>
@@ -45,6 +53,20 @@ $paseador ->consultar();
                 <th>Contacto</th>
                 <td><?php echo $paseador->getContacto(); ?></td>
               </tr>
+              <tr>
+                <th>Ciudad</th>
+                <td><?php echo htmlspecialchars($paseador->getCiudadNombre() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
+                <th>Barrio / Localidad</th>
+                <td><?php echo htmlspecialchars($paseador->getLocalidadNombre() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
+                <th>Perro Peligroso</th>
+                <td><?php echo $paseador->getAprobadoPeligroso() ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
+              </tr>
+              <?php if ($paseador->getCertificados()): ?>
+              <?php endif; ?>
             </table>
           </div>
         </div>

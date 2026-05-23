@@ -6,8 +6,12 @@ $mensaje = "";
 $perro = new Perro();
 $listaPerros = $perro->consultar("dueño", $id);
 
+$dueñoLocalidad = new Dueño($id);
+$dueñoLocalidad->consultar();
+$localidadId = $dueñoLocalidad->getLocalidadId();
+
 $paseador = new Paseador();
-$paseadores = $paseador->consultarActivos();
+$paseadores = $paseador->consultarActivos($localidadId);
 
 $peligrosidadLogica = new Peligrosidad();
 $peligrosidades = $peligrosidadLogica->consultarTodos();
@@ -218,10 +222,13 @@ include("presentacion/menu" . ucfirst($rol) . ".php");
                         <div id="step2" style="display:none;">
                             <h5>Selecciona un paseador</h5>
                             <p class="text-muted">Elige el paseador que realizará el paseo.</p>
+                            <div id="peligrosoWarningStep2" class="alert alert-warning d-none">
+                                <i class="fas fa-exclamation-triangle"></i> Has seleccionado un perro <strong>PELIGROSO</strong>. Solo se muestran paseadores aprobados para manejar perros peligrosos.
+                            </div>
                             <div class="row" id="paseadoresContainer">
                                 <?php foreach ($paseadores as $p): ?>
                                 <div class="col-md-4 mb-3">
-                                    <div class="paseador-card" data-id="<?php echo $p->getId(); ?>">
+                                    <div class="paseador-card" data-id="<?php echo $p->getId(); ?>" data-aprobado-peligroso="<?php echo $p->getAprobadoPeligroso(); ?>">
                                         <div class="text-center">
                                             <?php if ($p->getFoto() != "" && file_exists($p->getFoto())): ?>
                                                 <img src="<?php echo $p->getFoto(); ?>" class="rounded-circle mb-2" width="80" height="80" style="object-fit:cover;">
@@ -253,6 +260,9 @@ include("presentacion/menu" . ucfirst($rol) . ".php");
 
                         <div id="step3" style="display:none;">
                             <h5>Elige fecha y hora del paseo</h5>
+                            <div class="alert alert-info">
+                                <i class="fas fa-clock"></i> Los paseos tienen una duración de <strong>1 hora</strong>.
+                            </div>
                             <p class="text-muted" id="paseadorSeleccionadoInfo"></p>
 
                             <div class="row">
@@ -332,6 +342,31 @@ function actualizarPaso(paso) {
     $("#stepLabel").text(labels[paso]);
 }
 
+function filtrarPaseadoresPeligroso() {
+    var hayPeligroso = false;
+    $(".perro-card.selected").each(function(){
+        if ($(this).data("peligrosidad-nombre") === "PELIGROSO") hayPeligroso = true;
+    });
+
+    if (hayPeligroso) {
+        $("#peligrosoWarningStep2").removeClass("d-none");
+        $(".paseador-card").each(function(){
+            if ($(this).data("aprobado-peligroso") != 1) {
+                $(this).hide();
+                if ($(this).hasClass("selected")) {
+                    $(this).removeClass("selected");
+                    $(this).find(".paseador-radio").prop("checked", false);
+                    paseadorSeleccionado = null;
+                    $("#btnPaso3").prop("disabled", true);
+                }
+            }
+        });
+    } else {
+        $("#peligrosoWarningStep2").addClass("d-none");
+        $(".paseador-card").show();
+    }
+}
+
 $(".perro-card").click(function(){
     var checkbox = $(this).find(".perro-checkbox");
     var id = $(this).data("id");
@@ -352,6 +387,7 @@ $(".perro-card").click(function(){
     }
 
     actualizarCapacidad();
+    filtrarPaseadoresPeligroso();
     $("#btnPaso2").prop("disabled", perrosSeleccionados.length === 0);
 });
 
@@ -370,7 +406,8 @@ function actualizarCapacidad() {
         data: { idPerros: idsStr },
         dataType: "json",
         success: function(respuesta){
-            var html = "<div class='alert alert-" + (respuesta.capacidadActual > respuesta.capacidadMax ? "danger" : "info") + "'>";
+            var tipoAlerta = respuesta.valido ? "info" : "danger";
+            var html = "<div class='alert alert-" + tipoAlerta + "'>";
             html += "<strong>Capacidad:</strong> " + respuesta.mensaje;
             html += "</div>";
             $("#capacidadInfo").html(html);
@@ -381,6 +418,8 @@ function actualizarCapacidad() {
             } else {
                 $("#bozalWarning").addClass("d-none");
             }
+
+            $("#btnPaso2").prop("disabled", perrosSeleccionados.length === 0 || !respuesta.valido);
         }
     });
 }

@@ -30,21 +30,24 @@ class DueñoDAO{
     public function autenticarse() {
         return "SELECT idDueño
                 FROM Dueño
-                WHERE Correo = '" . $this -> correo . "' AND Clave = '" . md5($this -> clave) . "' AND Activo = 1";
+                WHERE Correo = '" . $this -> correo . "' AND Clave = '" . md5($this -> clave) . "' AND Estado_idEstado = 2";
     }
 
     public function registrar() {
-        return "INSERT INTO Dueño (NroDocumento, Nombre, Apellido, Correo, Clave, Contacto, Activo, Direccion, Foto, Localidad_idLocalidad, admin_idAdmin)
-                VALUES ('" . $this->nroDocumento . "','" . $this->nombre . "','" . $this->apellido . "','" . $this->correo . "', '" . $this->clave . "','" . $this->contacto . "', 1,'" . $this->direccion . "','" . $this->foto . "', " . $this->localidad . ", " . $this->adminId . ")";
+        return "INSERT INTO Dueño (NroDocumento, Nombre, Apellido, Correo, Clave, Contacto, Estado_idEstado, Direccion, Foto, Localidad_idLocalidad, admin_idAdmin)
+                VALUES ('" . $this->nroDocumento . "','" . $this->nombre . "','" . $this->apellido . "','" . $this->correo . "', '" . $this->clave . "','" . $this->contacto . "', 2,'" . $this->direccion . "','" . $this->foto . "', " . $this->localidad . ", " . $this->adminId . ")";
     }
     public function actualizar(){
+        $localidad = $this->localidad > 0 ? $this->localidad : "NULL";
         return "UPDATE Dueño SET
                 Nombre = '" . $this->nombre . "',
                 Apellido = '" . $this->apellido . "',
                 Correo = '" . $this->correo . "',
                 Clave = '" . $this->clave . "',
                 Contacto = '" . $this->contacto . "',
-                Foto = '" . $this->foto . "'
+                Foto = '" . $this->foto . "',
+                Direccion = '" . $this->direccion . "',
+                Localidad_idLocalidad = $localidad
             WHERE idDueño = " . $this->id;
     }
     
@@ -61,9 +64,11 @@ public function correoExiste() {
 }
 
 public function consultar() {
-    return "SELECT Nombre, Apellido, Correo, Clave, Contacto, Foto
-            FROM Dueño
-            WHERE idDueño = " . $this->id;
+    return "SELECT d.Nombre, d.Apellido, d.Correo, d.Clave, d.Contacto, d.Foto, d.NroDocumento, d.Direccion, d.Localidad_idLocalidad, l.Localidad, c.Ciudad
+            FROM Dueño d
+            LEFT JOIN Localidad l ON d.Localidad_idLocalidad = l.idLocalidad
+            LEFT JOIN Ciudad c ON l.Ciudad_idCiudad = c.idCiudad
+            WHERE d.idDueño = " . $this->id;
 }
 
 } 

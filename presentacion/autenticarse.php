@@ -23,10 +23,10 @@ if (isset($_POST["autenticarse"])) {
     require_once("persistencia/Conexion.php");
     $conexion = new Conexion();
     $conexion->abrir();
-    $conexion->ejecutar("SELECT idDueño, Activo FROM Dueño WHERE Correo = '$correo' AND (Clave = '$clave' OR Clave = '" . md5($clave) . "')");
+    $conexion->ejecutar("SELECT idDueño, Estado_idEstado FROM Dueño WHERE Correo = '$correo' AND (Clave = '$clave' OR Clave = '" . md5($clave) . "')");
     if ($conexion->filas() == 1) {
         $datosDueño = $conexion->registro();
-        if ($datosDueño[1] == 0) {
+        if ($datosDueño[1] == 4) {
             $mensajePaseador = "Usted tiene una multa pendiente. Contacte al administrador para solucionarlo y activar nuevamente su cuenta.";
         } else {
             $_SESSION["id"] = $datosDueño[0];
@@ -87,7 +87,8 @@ if (isset($_POST["autenticarse"])) {
           <ul class="list-unstyled">
             <li class="d-flex justify-content-center align-items-center mb-2"><span>✔️ Elije a tu paseador</span></li>
             <li class="d-flex justify-content-center align-items-center mb-2"><span>✔️ Elije tus horarios</span></li>
-            <li class="d-flex justify-content-center align-items-center"><span>✔️ Elije tu precio</span></li>
+            <li class="d-flex justify-content-center align-items-center mb-2"><span>✔️ Elije tu precio</span></li>
+            <li class="d-flex justify-content-center align-items-center mb-2"><span>✔️ Paseos de 1 hora de duración</span></li>
             <li class="d-flex justify-content-center align-items-center"><span>✔️ Solo pagos en efectivo y en persona</span></li>
           </ul>
         </div>

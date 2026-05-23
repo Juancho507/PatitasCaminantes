@@ -15,7 +15,7 @@ $idDueño = (int)$_SESSION["id"];
 $conexion = new Conexion();
 $conexion->abrir();
 
-$conexion->ejecutar("SELECT EstadoPaseo_idEstadoPaseo, FechaInicio FROM Paseo WHERE idPaseo = $idPaseo");
+$conexion->ejecutar("SELECT Estado_idEstado, FechaInicio FROM Paseo WHERE idPaseo = $idPaseo");
 $paseo = $conexion->registro();
 
 if (!$paseo) {
@@ -37,14 +37,14 @@ $diferencia = $ahora->diff($fechaInicio);
 $horasRestantes = ($diferencia->days * 24) + $diferencia->h + ($diferencia->i / 60);
 
 if ($horasRestantes < 2) {
-    $conexion->ejecutar("UPDATE Dueño SET Activo = 0 WHERE idDueño = $idDueño");
-    $conexion->ejecutar("UPDATE Paseo SET EstadoPaseo_idEstadoPaseo = 5 WHERE idPaseo = $idPaseo");
+    $conexion->ejecutar("UPDATE Dueño SET Estado_idEstado = 4 WHERE idDueño = $idDueño");
+    $conexion->ejecutar("UPDATE Paseo SET Estado_idEstado = 3 WHERE idPaseo = $idPaseo");
     echo json_encode(["exito" => true, "mensaje" => "Cancelaste con menos de 2 horas de anticipación. Tu cuenta ha sido bloqueada. Contacta al administrador."]);
     $conexion->cerrar();
     exit;
 }
 
-$conexion->ejecutar("UPDATE Paseo SET EstadoPaseo_idEstadoPaseo = 5 WHERE idPaseo = $idPaseo");
+$conexion->ejecutar("UPDATE Paseo SET Estado_idEstado = 3 WHERE idPaseo = $idPaseo");
 
 if ($conexion->afectadas() > 0) {
     echo json_encode(["exito" => true, "mensaje" => "Paseo cancelado correctamente."]);

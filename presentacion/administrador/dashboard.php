@@ -25,7 +25,7 @@ $conexion->ejecutar("SELECT DATE(p.FechaInicio) AS fecha, SUM(t.PrecioHora) AS i
     INNER JOIN Paseador pas ON p.Paseador_idPaseador = pas.idPaseador
     INNER JOIN Perro per ON p.perro_idPerro = per.idPerro
     INNER JOIN Tarifa t ON t.Paseador_idPaseador = pas.idPaseador AND t.Peligrosidad_idPeligrosidad = per.Peligrosidad_idPeligrosidad
-    WHERE p.EstadoPaseo_idEstadoPaseo = 4
+    WHERE p.Estado_idEstado = 6
     AND p.FechaInicio >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     GROUP BY DATE(p.FechaInicio)
     ORDER BY fecha ASC");
@@ -59,12 +59,12 @@ while ($reg = $conexion->registro()) {
 $conexion->ejecutar("SELECT p.idPaseo, p.FechaInicio,
     CONCAT(pas.Nombre, ' ', pas.Apellido) AS paseador,
     CONCAT(d.Nombre, ' ', d.Apellido) AS dueno,
-    ep.Estado
+    ep.Nombre
     FROM Paseo p
     INNER JOIN Paseador pas ON p.Paseador_idPaseador = pas.idPaseador
     INNER JOIN Perro per ON p.perro_idPerro = per.idPerro
     INNER JOIN Dueño d ON per.Dueño_idDueño = d.idDueño
-    INNER JOIN EstadoPaseo ep ON p.EstadoPaseo_idEstadoPaseo = ep.idEstadoPaseo
+    INNER JOIN estado ep ON p.Estado_idEstado = ep.idEstado
     ORDER BY p.FechaInicio DESC
     LIMIT 10");
 $actividadReciente = [];

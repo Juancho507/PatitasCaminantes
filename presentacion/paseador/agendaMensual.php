@@ -31,7 +31,7 @@ foreach ($todosPaseos as $p) {
             "dueno" => $p->getDueño()
         ];
         $paseosPorDia[$dia][] = $item;
-        if ($p->getEstadoPaseo() === "Completado") {
+        if ($p->getEstadoPaseo() === "completado") {
             $totalGanancias += (float)$p->getPrecio();
         }
     }

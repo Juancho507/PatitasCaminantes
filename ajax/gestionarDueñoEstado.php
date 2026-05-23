@@ -11,7 +11,7 @@ if (
 
     $conexion = new Conexion();
     $conexion->abrir();
-    $conexion->ejecutar("UPDATE Dueño SET Activo = $activo WHERE idDueño = $id");
+    $conexion->ejecutar("UPDATE Dueño SET Estado_idEstado = $activo WHERE idDueño = $id");
     $conexion->cerrar();
     echo "ok";
 } else {

@@ -13,6 +13,12 @@ class Paseador extends Persona{
     private $estadoId;
     private $nroDocumento;
     private $fechaNacimiento;
+    private $localidadId;
+    private $localidadNombre;
+    private $ciudadNombre;
+    private $certificados = "";
+    private $hojaDeVida = "";
+    private $aprobadoPeligroso = 0;
     
     public function getContacto(){
         return $this -> contacto;
@@ -36,7 +42,23 @@ class Paseador extends Persona{
     public function getFechaNacimiento() {
         return $this->fechaNacimiento;
     }
-    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "", $informacion = "", $estadoId = 2) {
+    public function getLocalidadId() {
+        return $this->localidadId;
+    }
+    public function getLocalidadNombre() {
+        return $this->localidadNombre;
+    }
+    public function getCiudadNombre() {
+        return $this->ciudadNombre;
+    }
+    public function getCertificados() {
+        return $this->certificados;
+    }
+    public function getAprobadoPeligroso() { return $this->aprobadoPeligroso; }
+    public function setAprobadoPeligroso($v) { $this->aprobadoPeligroso = $v; }
+    public function setLocalidadId($v) { $this->localidadId = $v; }
+    public function setCertificados($v) { $this->certificados = $v; }
+    public function __construct($id = "", $nombre = "", $apellido = "", $correo = "", $clave = "", $contacto = "", $foto = "", $informacion = "", $estadoId = 1) {
         parent::__construct($id, $nombre, $apellido, $correo, $clave, $contacto, $foto);
         $this->contacto = $contacto;
         $this->foto = $foto;
@@ -71,11 +93,11 @@ class Paseador extends Persona{
     $conexion->cerrar();
     return false;
 }
-public function consultarActivos() {
+public function consultarActivos($localidadId = 0, $soloPeligroso = false) {
     $conexion = new Conexion();
     $conexion->abrir();
     $paseadorDAO = new PaseadorDAO();
-    $conexion->ejecutar($paseadorDAO->consultarActivos());
+    $conexion->ejecutar($paseadorDAO->consultarActivos($localidadId, $soloPeligroso));
 
     $paseadores = [];
     while ($registro = $conexion->registro()) {
@@ -83,6 +105,7 @@ public function consultarActivos() {
             $registro[0], $registro[1], $registro[2], $registro[3],
             "", $registro[4], $registro[5], $registro[6], $registro[7]
         );
+        $temp->setAprobadoPeligroso($registro[8] ?? 0);
         $temp->consultarTarifas();
         $paseadores[] = $temp;
     }
@@ -91,7 +114,7 @@ public function consultarActivos() {
     return $paseadores;
 }
 
-    public function registrar($activoValor = 2) {
+    public function registrar($activoValor = 1) {
         $conexion = new Conexion();
         $conexion->abrir();
         $claveMd5 = md5($this->clave);
@@ -116,8 +139,23 @@ public function consultarActivos() {
             $this->clave,
             $this->contacto,
             $this->foto,
-            $this->informacion
+            $this->informacion,
+            1,
+            "",
+            "",
+            $this->localidadId,
+            "",
+            $this->certificados,
+            $this->aprobadoPeligroso
             );$conexion->ejecutar($paseadorDAO->actualizar());
+        $conexion->cerrar();
+    }
+
+    public function actualizarAprobacionPeligroso() {
+        $conexion = new Conexion();
+        $conexion->abrir();
+        $paseadorDAO = new PaseadorDAO($this->id, "", "", "", "", "", "", "", 1, "", "", 0, "", "", $this->aprobadoPeligroso);
+        $conexion->ejecutar($paseadorDAO->actualizarAprobacionPeligroso());
         $conexion->cerrar();
     }
     public function actualizarEstado() {
@@ -147,6 +185,12 @@ public function consultarActivos() {
                 $this->estadoId = $datos[7];
                 $this->nroDocumento = $datos[8] ?? "";
                 $this->fechaNacimiento = $datos[9] ?? "";
+                $this->localidadId = $datos[10] ?? 0;
+                $this->localidadNombre = $datos[11] ?? "";
+                $this->ciudadNombre = $datos[12] ?? "";
+                $this->hojaDeVida = $datos[13] ?? "";
+                $this->certificados = $datos[14] ?? "";
+                $this->aprobadoPeligroso = $datos[15] ?? 0;
                 $this->consultarTarifas();
             }
         } else {
@@ -160,6 +204,12 @@ public function consultarActivos() {
             $this->estadoId = "";
             $this->nroDocumento = "";
             $this->fechaNacimiento = "";
+            $this->localidadId = 0;
+            $this->localidadNombre = "";
+            $this->ciudadNombre = "";
+            $this->hojaDeVida = "";
+            $this->certificados = "";
+            $this->aprobadoPeligroso = 0;
             $this->tarifas = [];
         }
         

@@ -8,7 +8,7 @@ $paseo = new Paseo();
 $paseos = $paseo->consultarHistorial("dueño", $idDueño);
 
 $completados = array_filter($paseos, function ($p) {
-    return trim($p->getEstadoPaseo()) === 'Completado';
+    return trim($p->getEstadoPaseo()) === 'completado';
 });
 
 $paseosAgrupados = [];

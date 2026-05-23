@@ -40,12 +40,28 @@ $dueño->consultar();
                 <td><?php echo $dueño->getApellido(); ?></td>
               </tr>
               <tr>
+                <th>Documento</th>
+                <td><?php echo htmlspecialchars($dueño->getNroDocumento() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
                 <th>Correo</th>
                 <td><?php echo $dueño->getCorreo(); ?></td>
               </tr>
               <tr>
                 <th>Contacto</th>
                 <td><?php echo $dueño->getContacto(); ?></td>
+              </tr>
+              <tr>
+                <th>Dirección</th>
+                <td><?php echo htmlspecialchars($dueño->getDireccion() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
+                <th>Ciudad</th>
+                <td><?php echo htmlspecialchars($dueño->getCiudadNombre() ?: 'N/A'); ?></td>
+              </tr>
+              <tr>
+                <th>Barrio / Localidad</th>
+                <td><?php echo htmlspecialchars($dueño->getLocalidadNombre() ?: 'N/A'); ?></td>
               </tr>
             </table>
           </div>

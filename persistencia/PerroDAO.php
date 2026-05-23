@@ -23,7 +23,7 @@ class PerroDAO {
     }
 
     public function consultarTodosLosPerros() {
-        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Activo
+        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Estado_idEstado
                 FROM Perro p
                 INNER JOIN Raza r ON p.Raza_idRaza = r.idRaza
                 INNER JOIN Dueño d ON p.Dueño_idDueño = d.idDueño
@@ -31,7 +31,7 @@ class PerroDAO {
     }
 
     public function consultarPerrosPorDueño($idDueño) {
-        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Activo
+        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Estado_idEstado
                 FROM Perro p
                 INNER JOIN Raza r ON p.Raza_idRaza = r.idRaza
                 INNER JOIN Dueño d ON p.Dueño_idDueño = d.idDueño
@@ -40,7 +40,7 @@ class PerroDAO {
     }
 
     public function consultarPorId() {
-        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Activo
+        return "SELECT p.idPerro, p.Nombre, p.Foto, r.Raza, CONCAT(d.Nombre, ' ', d.Apellido) AS nombreCompletoDueño, t.Tamaño, p.Peso, p.Recomendacion, p.Peligrosidad_idPeligrosidad, p.Estado_idEstado
                 FROM Perro p
                 INNER JOIN Raza r ON p.Raza_idRaza = r.idRaza
                 INNER JOIN Dueño d ON p.Dueño_idDueño = d.idDueño
@@ -49,7 +49,7 @@ class PerroDAO {
     }
 
     public function insertar(){
-        return "INSERT INTO Perro (Nombre, Peso, Recomendacion, Activo, Foto, Raza_idRaza, Dueño_idDueño, Peligrosidad_idPeligrosidad)
+        return "INSERT INTO Perro (Nombre, Peso, Recomendacion, Estado_idEstado, Foto, Raza_idRaza, Dueño_idDueño, Peligrosidad_idPeligrosidad)
                 VALUES ('" . $this->nombre . "', " . $this->peso . ", '" . $this->recomendacion . "', " . $this->activo . ", '" . $this->foto . "', " . $this->raza . ", " . $this->dueño . ", " . $this->peligrosidad . ")";
     }
 
@@ -58,7 +58,7 @@ class PerroDAO {
                 Nombre = '" . $this->nombre . "',
                 Peso = " . $this->peso . ",
                 Recomendacion = '" . $this->recomendacion . "',
-                Activo = " . $this->activo . ",
+                Estado_idEstado = " . $this->activo . ",
                 Foto = '" . $this->foto . "',
                 Raza_idRaza = " . $this->raza . ",
                 Dueño_idDueño = " . $this->dueño . ",

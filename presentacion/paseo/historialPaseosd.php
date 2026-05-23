@@ -36,11 +36,11 @@ function buscarHistorialD() {
                         </tr></thead><tbody>`;
                 data.forEach(item => {
                     let estadoBadge = "";
-                    if (item.idEstado === 5) {
+                    if (item.idEstado === 3) {
                         estadoBadge = `<span class="badge bg-danger">${item.estado}</span>`;
-                    } else if (item.idEstado === 6) {
+                    } else if (item.idEstado === 7) {
                         estadoBadge = `<span class="badge bg-warning text-dark">${item.estado}</span>`;
-                    } else if (item.idEstado === 4) {
+                    } else if (item.idEstado === 6) {
                         estadoBadge = `<span class="badge bg-success">${item.estado}</span>`;
                     } else if (item.idEstado === 2) {
                         estadoBadge = `<span class="badge bg-primary">${item.estado}</span>`;

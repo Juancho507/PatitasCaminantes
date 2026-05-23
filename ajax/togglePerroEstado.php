@@ -15,9 +15,9 @@ $conexion->abrir();
 
 if ($_SESSION["rol"] === "dueño") {
     $idDueño = (int)$_SESSION["id"];
-    $conexion->ejecutar("UPDATE Perro SET Activo = $activo WHERE idPerro = $id AND Dueño_idDueño = $idDueño");
+    $conexion->ejecutar("UPDATE Perro SET Estado_idEstado = $activo WHERE idPerro = $id AND Dueño_idDueño = $idDueño");
 } elseif ($_SESSION["rol"] === "administrador") {
-    $conexion->ejecutar("UPDATE Perro SET Activo = $activo WHERE idPerro = $id");
+    $conexion->ejecutar("UPDATE Perro SET Estado_idEstado = $activo WHERE idPerro = $id");
 } else {
     echo "invalid";
     $conexion->cerrar();

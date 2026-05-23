@@ -20,9 +20,9 @@ if ($idPaseo <= 0) {
 $conexion = new Conexion();
 $conexion->abrir();
 
-$conexion->ejecutar("SELECT EstadoPaseo_idEstadoPaseo FROM paseo WHERE idPaseo = $idPaseo");
+$conexion->ejecutar("SELECT Estado_idEstado FROM paseo WHERE idPaseo = $idPaseo");
 $estadoPaseo = $conexion->registro();
-if (!$estadoPaseo || (int)$estadoPaseo[0] !== 4) {
+if (!$estadoPaseo || (int)$estadoPaseo[0] !== 6) {
     $conexion->cerrar();
     die("La factura solo está disponible para paseos completados.");
 }

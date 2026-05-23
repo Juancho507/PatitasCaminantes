@@ -7,11 +7,11 @@ include("presentacion/menu" . ucfirst($rol) . ".php");
 
 $conexion = new Conexion();
 $conexion->abrir();
-$conexion->ejecutar("SELECT s.idSolicitud, s.NombreRaza, CONCAT(d.Nombre, ' ', d.Apellido) AS Dueño, s.FechaSolicitud, es.Estado
+$conexion->ejecutar("SELECT s.idSolicitud, s.NombreRaza, CONCAT(d.Nombre, ' ', d.Apellido) AS Dueño, s.FechaSolicitud, es.Nombre
     FROM solicitudraza s
     INNER JOIN Dueño d ON s.idDueño = d.idDueño
-    INNER JOIN estadosolicitud es ON s.EstadoSolicitud_idEstadoSolicitud = es.idEstadoSolicitud
-    ORDER BY FIELD(es.idEstadoSolicitud, 1, 2, 3), s.FechaSolicitud DESC");
+    INNER JOIN estado es ON s.Estado_idEstado = es.idEstado
+    ORDER BY FIELD(es.idEstado, 1, 2, 3), s.FechaSolicitud DESC");
 $solicitudes = [];
 while ($reg = $conexion->registro()) {
     $solicitudes[] = $reg;

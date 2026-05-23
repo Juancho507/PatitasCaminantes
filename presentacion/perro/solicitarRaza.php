@@ -12,7 +12,7 @@ if (isset($_POST["solicitar"])) {
         $conexion = new Conexion();
         $conexion->abrir();
         $nombreRazaSeguro = addslashes($nombreRaza);
-        $conexion->ejecutar("INSERT INTO solicitudraza (NombreRaza, idDueño, EstadoSolicitud_idEstadoSolicitud) VALUES ('$nombreRazaSeguro', $id, 1)");
+        $conexion->ejecutar("INSERT INTO solicitudraza (NombreRaza, idDueño, Estado_idEstado) VALUES ('$nombreRazaSeguro', $id, 1)");
         if ($conexion->afectadas() > 0) {
             $exito = true;
             $mensaje = "Solicitud enviada. El administrador revisará tu propuesta.";

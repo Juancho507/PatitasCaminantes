@@ -7,7 +7,7 @@ include("presentacion/menu" . ucfirst($rol) . ".php");
 
 $conexion = new Conexion();
 $conexion->abrir();
-$conexion->ejecutar("SELECT idDueño, NroDocumento, Nombre, Apellido, Correo, Contacto, Activo, Direccion FROM Dueño ORDER BY idDueño DESC");
+$conexion->ejecutar("SELECT idDueño, NroDocumento, Nombre, Apellido, Correo, Contacto, Estado_idEstado, Direccion FROM Dueño ORDER BY idDueño DESC");
 $dueños = [];
 while ($reg = $conexion->registro()) {
     $dueños[] = $reg;
@@ -45,16 +45,16 @@ $conexion->cerrar();
                     <td class="td-correo"><?php echo htmlspecialchars($d[4]); ?></td>
                     <td class="td-contacto"><?php echo htmlspecialchars($d[5]); ?></td>
                     <td>
-                        <span class="badge bg-<?php echo $d[6] == 1 ? 'success' : 'danger'; ?> estado-badge" data-id="<?php echo $d[0]; ?>">
-                            <?php echo $d[6] == 1 ? 'Sí' : 'No'; ?>
+                        <span class="badge bg-<?php echo $d[6] == 2 ? 'success' : 'danger'; ?> estado-badge" data-id="<?php echo $d[0]; ?>">
+                            <?php echo $d[6] == 2 ? 'Sí' : 'No'; ?>
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-<?php echo $d[6] == 1 ? 'warning' : 'success'; ?> toggle-dueno"
+                        <button class="btn btn-sm btn-<?php echo $d[6] == 2 ? 'warning' : 'success'; ?> toggle-dueno"
                             data-id="<?php echo $d[0]; ?>"
                             data-activo="<?php echo $d[6]; ?>">
-                            <i class="fas fa-<?php echo $d[6] == 1 ? 'ban' : 'check'; ?>"></i>
-                            <?php echo $d[6] == 1 ? 'Deshabilitar' : 'Habilitar'; ?>
+                            <i class="fas fa-<?php echo $d[6] == 2 ? 'ban' : 'check'; ?>"></i>
+                            <?php echo $d[6] == 2 ? 'Deshabilitar' : 'Habilitar'; ?>
                         </button>
                     </td>
                 </tr>
@@ -109,7 +109,7 @@ $(document).ready(function() {
         var btn = $(this);
         var id = btn.data("id");
         var activoActual = btn.data("activo");
-        var nuevoActivo = activoActual == 1 ? 0 : 1;
+        var nuevoActivo = activoActual == 2 ? 4 : 2;
 
         $.ajax({
             url: "ajax/gestionarDueñoEstado.php",
@@ -119,13 +119,13 @@ $(document).ready(function() {
                 if (response.trim() === "ok") {
                     var fila = btn.closest("tr");
                     var badge = fila.find(".estado-badge");
-                    badge.text(nuevoActivo == 1 ? "Sí" : "No")
+                    badge.text(nuevoActivo == 2 ? "Sí" : "No")
                         .removeClass("bg-success bg-danger")
-                        .addClass(nuevoActivo == 1 ? "bg-success" : "bg-danger");
+                        .addClass(nuevoActivo == 2 ? "bg-success" : "bg-danger");
 
-                    btn.html(nuevoActivo == 1 ? '<i class="fas fa-ban"></i> Deshabilitar' : '<i class="fas fa-check"></i> Habilitar')
+                    btn.html(nuevoActivo == 2 ? '<i class="fas fa-ban"></i> Deshabilitar' : '<i class="fas fa-check"></i> Habilitar')
                         .removeClass("btn-warning btn-success")
-                        .addClass(nuevoActivo == 1 ? "btn-warning" : "btn-success");
+                        .addClass(nuevoActivo == 2 ? "btn-warning" : "btn-success");
                     btn.data("activo", nuevoActivo);
 
                     $("#respuestaAjax").html('<div class="alert alert-success alert-dismissible fade show" role="alert">Estado actualizado correctamente.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');

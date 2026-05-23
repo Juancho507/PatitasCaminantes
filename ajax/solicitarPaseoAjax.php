@@ -30,6 +30,12 @@ if ($idPerro2 > 0) {
     $perros[] = $idPerro2;
 }
 
+$totalPerrosSolicitud = count($perros);
+if ($totalPerrosSolicitud > 5) {
+    echo json_encode(["exito" => false, "mensaje" => "Máximo 5 perros por paseo."]);
+    exit;
+}
+
 $conexion = new Conexion();
 $conexion->abrir();
 
@@ -50,20 +56,33 @@ foreach ($perros as $idPerro) {
     }
 }
 
-$capacidadMap = ["BAJO" => 5, "MEDIO" => 3, "ALTO" => 2, "PELIGROSO" => 1];
-$totalCapacidad = 0;
+if ($necesitaBozal) {
+    $conexion->ejecutar("SELECT AprobadoPeligroso FROM Paseador WHERE idPaseador = $idPaseador");
+    $regPeli = $conexion->registro();
+    if (!$regPeli || !$regPeli[0]) {
+        $conexion->cerrar();
+        echo json_encode(["exito" => false, "mensaje" => "El paseador seleccionado no está aprobado para manejar perros de nivel PELIGROSO."]);
+        exit;
+    }
+}
+
+$jerarquia = ["BAJO" => 1, "MEDIO" => 2, "ALTO" => 3, "PELIGROSO" => 4];
+$limiteMap = ["BAJO" => 5, "MEDIO" => 3, "ALTO" => 2, "PELIGROSO" => 1];
+
 $nivelMaximo = "BAJO";
+$nivelMaxInt = 0;
 foreach ($niveles as $n) {
-    $totalCapacidad += $capacidadMap[$n];
-    if ($capacidadMap[$n] < $capacidadMap[$nivelMaximo]) {
+    if (($jerarquia[$n] ?? 0) > $nivelMaxInt) {
+        $nivelMaxInt = $jerarquia[$n];
         $nivelMaximo = $n;
     }
 }
 
-$capacidadMax = 6;
-if ($totalCapacidad > $capacidadMax) {
+$limite = $limiteMap[$nivelMaximo];
+if ($totalPerrosSolicitud > $limite) {
     $conexion->cerrar();
-    echo json_encode(["exito" => false, "mensaje" => "La capacidad máxima de peligrosidad es $capacidadMax. Estos perros exceden el límite."]);
+    $nivelStr = ucfirst(strtolower($nivelMaximo));
+    echo json_encode(["exito" => false, "mensaje" => "Límite excedido: nivel $nivelStr permite máximo $limite perro(s), seleccionaste $totalPerrosSolicitud."]);
     exit;
 }
 
@@ -97,13 +116,20 @@ $fechaStr = $fechaInicioDT->format('Y-m-d');
 $horaInicio = $fechaInicioDT->format('H:i:s');
 $conexion->ejecutar("SELECT COUNT(*) FROM Paseo p
                       WHERE p.Paseador_idPaseador = $idPaseador
-                      AND p.EstadoPaseo_idEstadoPaseo IN (1,2)
+                      AND p.Estado_idEstado IN (1,2)
                       AND p.FechaInicio < '$fechaStr 23:59:59'
                       AND p.FechaFin > '$fechaStr $horaInicio'");
 $fila = $conexion->registro();
 if ($fila && $fila[0] >= 2) {
     $conexion->cerrar();
     echo json_encode(["exito" => false, "mensaje" => "El paseador ya tiene 2 paseos agendados en esa hora."]);
+    exit;
+}
+
+$resultado = Paseo::validarCapacidadConcurrente($idPaseador, $fechaInicio, $perros, 0, true);
+if (!$resultado["valido"]) {
+    $conexion->cerrar();
+    echo json_encode(["exito" => false, "mensaje" => $resultado["mensaje"]]);
     exit;
 }
 

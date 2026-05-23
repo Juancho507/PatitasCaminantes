@@ -14,14 +14,14 @@ if ($rol === "dueño") {
     $paseo = new Paseo();
     $paseos = $paseo->consultarHistorial("dueño", $id);
     $filtrados = array_filter($paseos, function ($p) use ($idPerro) {
-        return $p->getIdPerro() == $idPerro && trim($p->getEstadoPaseo()) === 'Completado';
+        return $p->getIdPerro() == $idPerro && trim($p->getEstadoPaseo()) === 'completado';
     });
 } else {
     $titulo = "Facturas - Mis Paseos Completados";
     $paseo = new Paseo();
     $paseos = $paseo->consultarHistorial("paseador", $id);
     $filtrados = array_filter($paseos, function ($p) {
-        return trim($p->getEstadoPaseo()) === 'Completado';
+        return trim($p->getEstadoPaseo()) === 'completado';
     });
 }
 

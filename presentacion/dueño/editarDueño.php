@@ -1,4 +1,17 @@
 <?php
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["ajax"]) && $_POST["ajax"] === "localidad") {
+    while (ob_get_level()) ob_end_clean();
+    $localidadObj = new Localidad();
+    $lista = $localidadObj->consultarPorCiudad(intval($_POST["ciudad_id"]));
+    $options = [];
+    foreach ($lista as $l) {
+        $options[] = ["id" => $l->getId(), "nombre" => $l->getNombre()];
+    }
+    header("Content-Type: application/json");
+    echo json_encode($options);
+    exit;
+}
+
 if ($_SESSION["rol"] != "dueño") {
     header("Location: ?pid=" . base64_encode("presentacion/noAutorizado.php"));
     exit();
@@ -15,6 +28,8 @@ if (isset($_POST["editar"])) {
     $correo = $_POST["correo"];
     $claveNueva = $_POST["clave"];
     $contacto = $_POST["contacto"];
+    $direccion = trim($_POST["direccion"] ?? "");
+    $localidad_id = intval($_POST["localidad"] ?? 0);
     $foto = $_FILES["foto"]["name"];
     $tam = $_FILES["foto"]["size"];
     $rutaLocal = $_FILES["foto"]["tmp_name"];
@@ -42,10 +57,13 @@ if (isset($_POST["editar"])) {
     
     if ($error == 0) {
         $dueñoActualizado = new Dueño($id, $nombre, $apellido, $correo, $claveFinal, $contacto, $rutaServidor);
-        $dueñoActualizado->actualizar();
+        $dueñoActualizado->actualizar($localidad_id, $direccion);
         $dueño = $dueñoActualizado;
     }
 }
+
+$ciudad = new Ciudad();
+$ciudades = $ciudad->consultarTodos();
 ?>
 <body>
 <?php
@@ -88,6 +106,28 @@ include("presentacion/menuDueño.php");
                             <label class="form-label">Contacto</label>
                             <input type="text" name="contacto" class="form-control" value="<?php echo htmlspecialchars($dueño->getContacto()); ?>" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" name="direccion" class="form-control" value="<?php echo htmlspecialchars($dueño->getDireccion()); ?>">
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Ciudad</label>
+                          <select name="ciudad" id="ciudad" class="form-select">
+                            <option value="">Seleccione una ciudad</option>
+                            <?php foreach ($ciudades as $c): ?>
+                              <option value="<?= $c->getId() ?>" <?= ($dueño->getCiudadNombre() === $c->getNombre()) ? 'selected' : '' ?>><?= htmlspecialchars($c->getNombre()) ?></option>
+                            <?php endforeach; ?>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Barrio / Localidad</label>
+                          <select name="localidad" id="localidad" class="form-select" data-selected="<?= $dueño->getLocalidadId() ?>">
+                            <option value="">Primero seleccione una ciudad</option>
+                            <?php if ($dueño->getLocalidadId()): ?>
+                              <option value="<?= $dueño->getLocalidadId() ?>" selected><?= htmlspecialchars($dueño->getLocalidadNombre()) ?></option>
+                            <?php endif; ?>
+                          </select>
+                        </div>
                         <div class="mb-3 text-center">
                             <?php
                             if ($dueño->getFoto() != "" && file_exists($dueño->getFoto())) {
@@ -106,12 +146,41 @@ include("presentacion/menuDueño.php");
 
                     <hr>
                     <form method="post" action="?pid=<?php echo base64_encode("presentacion/dueño/eliminarDueño.php"); ?>" onsubmit="return confirmarEliminacion();">
-   				 <button type="submit" name="eliminar" class="btn btn-danger">Eliminar Cuenta</button>
+    				 <button type="submit" name="eliminar" class="btn btn-danger">Eliminar Cuenta</button>
 					</form>
                   			  <script>
 			function confirmarEliminacion() {
-   			 return confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.");
+    			 return confirm("¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer.");
 				}
+
+$(document).ready(function() {
+  if ($('#ciudad').val()) {
+    $('#ciudad').trigger('change');
+  }
+
+  $('#ciudad').change(function() {
+    var ciudadId = $(this).val();
+    var $localidad = $('#localidad');
+    if (ciudadId) {
+      $.ajax({
+        type: 'POST',
+        url: window.location.href,
+        data: { ajax: 'localidad', ciudad_id: ciudadId },
+        dataType: 'json',
+        success: function(data) {
+          var selectedLoc = $localidad.data('selected');
+          $localidad.empty();
+          $localidad.append('<option value="">Seleccione un barrio/localidad</option>');
+          $.each(data, function(i, item) {
+            $localidad.append('<option value="' + item.id + '"' + (selectedLoc == item.id ? ' selected' : '') + '>' + item.nombre + '</option>');
+          });
+        }
+      });
+    } else {
+      $localidad.empty().append('<option value="">Primero seleccione una ciudad</option>');
+    }
+  });
+});
 					</script>
 
                 </div>
