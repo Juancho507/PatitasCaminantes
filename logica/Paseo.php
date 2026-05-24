@@ -15,6 +15,7 @@ class Paseo {
     private $precio;
     private $dueño;
     private $bozal;
+    private $ultimoError = "";
 
 public function getDueño() {
     return $this->dueño;
@@ -57,6 +58,9 @@ public function setPaseador($paseador) {
     }
     public function getIdEstadoPaseo() {
         return $this->idEstadoPaseo;
+    }
+    public function getUltimoError() {
+        return $this->ultimoError;
     }
     public function setIdEstadoPaseo($id) {
         $this->idEstadoPaseo = $id;
@@ -117,6 +121,7 @@ public function setPaseador($paseador) {
             return true;
         }
         
+        $this->ultimoError = $conexion->getError();
         $conexion->cerrar();
         return false;
     }

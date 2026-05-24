@@ -149,5 +149,6 @@ $conexion->cerrar();
 if ($exito) {
     echo json_encode(["exito" => true, "mensaje" => "Paseo solicitado correctamente."]);
 } else {
-    echo json_encode(["exito" => false, "mensaje" => "Error al solicitar el paseo."]);
+    $errorMsg = $paseo->getUltimoError() ?: "Error al solicitar el paseo.";
+    echo json_encode(["exito" => false, "mensaje" => $errorMsg]);
 }

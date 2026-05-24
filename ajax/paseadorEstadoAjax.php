@@ -26,12 +26,14 @@ if (
     }
 
     $paseadorDAO = new PaseadorDAO($id, "", "", "", "", "", "", "", $estado);
-    try {
-        $conexion->ejecutar($paseadorDAO->actualizarEstado());
+    $conexion->ejecutar($paseadorDAO->actualizarEstado());
+    if ($conexion->getResultado() !== false) {
         $conexion->cerrar();
         echo json_encode(["exito" => true, "mensaje" => "ok"]);
-    } catch (Exception $e) {
-        echo json_encode(["exito" => false, "mensaje" => "error: " . $e->getMessage()]);
+    } else {
+        $error = $conexion->getError();
+        $conexion->cerrar();
+        echo json_encode(["exito" => false, "mensaje" => "Error al actualizar: " . $error]);
     }
 } else {
     echo json_encode(["exito" => false, "mensaje" => "invalid"]);

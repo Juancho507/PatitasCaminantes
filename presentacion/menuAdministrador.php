@@ -37,7 +37,7 @@ $administrador->consultar();
 
       <li class="nav-item">
         <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/verAspirantes.php"); ?>">
-          <i class="fa-solid fa-person-walking"></i> Ver Aspirantes
+          <i class="fa-solid fa-person-walking"></i> Paseadores
         </a>
       </li>
 
@@ -60,6 +60,14 @@ $administrador->consultar();
           <i class="fa-solid fa-chart-line"></i> Estadísticas
         </a>
       </li>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="?pid=<?php echo base64_encode("presentacion/administrador/baseDeDatos.php"); ?>">
+          <i class="fa-solid fa-database"></i> Base de Datos
+        </a>
+      </li>
+
+      
 
     </ul>
 

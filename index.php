@@ -82,6 +82,7 @@ $paginas_con_autenticacion = array(
     "presentacion/paseador/configurarDisponibilidad.php",
     "presentacion/paseador/agendaMensual.php",
     "presentacion/perro/solicitarRaza.php",
+    "presentacion/administrador/baseDeDatos.php"
 );
 
 if (!isset($_GET["pid"])) {

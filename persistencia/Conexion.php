@@ -32,6 +32,9 @@ class Conexion{
     public function afectadas() {
         return $this->conexion->affected_rows;
     }
+    public function getError() {
+        return $this->conexion->error;
+    }
     
     
     

@@ -46,9 +46,9 @@ if (isset($_POST["autenticarse"])) {
             $idPaseador = $datos[0];
             $estadoId = (int)$datos[1];
             $estadoNombre = $datos[2];
-            $conexion->cerrar();
 
             if ($estadoId == 2) {
+                $conexion->cerrar();
                 $_SESSION["id"] = $idPaseador;
                 $_SESSION["rol"] = "paseador";
                 header("Location: ?pid=" . base64_encode("presentacion/sesionPaseador.php"));

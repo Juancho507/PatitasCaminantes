@@ -10,7 +10,25 @@ include ("presentacion/encabezadoP.php");
 include ("presentacion/menuPaseador.php");
 $paseador = new Paseador($id);
 $paseador ->consultar();
+
+// Show pending review message for aspirantes
+$estadoPaseador = $paseador->getEstadoId();
 ?>
+<?php if ($estadoPaseador == 1): ?>
+<div class="container mt-4">
+    <div class="alert alert-info text-center shadow-sm">
+        <i class="fas fa-clock me-2"></i>
+        <strong>Tu solicitud está en revisión.</strong> Te notificaremos cuando sea procesada. Gracias por tu paciencia.
+    </div>
+</div>
+<?php elseif ($estadoPaseador == 3): ?>
+<div class="container mt-4">
+    <div class="alert alert-danger text-center shadow-sm">
+        <i class="fas fa-times-circle me-2"></i>
+        <strong>Tu solicitud fue rechazada.</strong> Si crees que fue un error, por favor contáctanos al correo <a href="mailto:juan@patitas.com" class="alert-link">juan@patitas.com</a>.
+    </div>
+</div>
+<?php endif; ?>
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-7 mx-auto"> 
