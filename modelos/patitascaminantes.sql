@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-05-2026 a las 23:27:59
+-- Tiempo de generación: 27-05-2026 a las 13:13:48
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -157,7 +157,7 @@ CREATE TABLE `dueño` (
 --
 
 INSERT INTO `dueño` (`idDueño`, `NroDocumento`, `Nombre`, `Apellido`, `Correo`, `Clave`, `Contacto`, `Direccion`, `Foto`, `Estado_idEstado`, `Localidad_idLocalidad`, `admin_idAdmin`) VALUES
-(1, '1001001001', 'Carlos', 'Perez', 'carlos@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111111, 'Calle 1', 'imagenes/1779141855.png', 2, 1, 1),
+(1, '1001001001', 'Carlos', 'Perez', 'carlos@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111111, 'Calle 1', 'imagenes/1779141855.png', 4, 1, 1),
 (2, '1001001002', 'Laura', 'Gomez', 'laura@gmail.com', '1234', 300111112, 'Calle 2', 'laura.jpg', 2, 2, 1),
 (3, '1001001003', 'Mateo', 'Ruiz', 'mateo@gmail.com', '1234', 300111113, 'Calle 3', 'mateo.jpg', 2, 3, 1),
 (4, '1001001004', 'Valentina', 'Diaz', 'valentina@gmail.com', '1234', 300111114, 'Calle 4', 'vale.jpg', 2, 4, 1),
@@ -167,7 +167,7 @@ INSERT INTO `dueño` (`idDueño`, `NroDocumento`, `Nombre`, `Apellido`, `Correo`
 (8, '1001001008', 'Daniela', 'Vargas', 'daniela@gmail.com', '1234', 300111118, 'Calle 8', 'daniela.jpg', 2, 8, 2),
 (9, '1001001009', 'Juan', 'Castro', 'juan@gmail.com', '1234', 300111119, 'Calle 9', 'juan.jpg', 2, 9, 1),
 (10, '1001001010', 'Sara', 'Mendez', 'sara@gmail.com', '1234', 300111120, 'Calle 10', 'sara.jpg', 2, 10, 1),
-(50, '1001001011', 'Carlos', 'Mendoza', 'carlos@email.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111101, 'Cra 1 #2-3', NULL, 2, 1, 1),
+(50, '1001001011', 'Carlos', 'Mendoza', 'carlos@email.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111101, 'Cra 1 #2-3', NULL, 4, 1, 1),
 (51, '1001001012', 'Laura', 'Giraldo', 'laura@email.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111102, 'Cra 2 #3-4', NULL, 2, 2, 1),
 (52, '1001001013', 'Pedro', 'Ramirez', 'pedro@email.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111103, 'Cra 3 #4-5', NULL, 4, 3, 1),
 (53, '1001001014', 'Ana', 'Martinez', 'ana@email.com', '81dc9bdb52d04dc20036dbd8313ed055', 300111104, 'Cra 4 #5-6', NULL, 2, 4, 1);
@@ -344,7 +344,8 @@ INSERT INTO `paseo` (`idPaseo`, `FechaInicio`, `FechaFin`, `Bozal`, `Observacion
 (54, '2026-06-17 08:00:00', '2026-06-17 09:00:00', 0, '5 perros nivel Bajo - capacidad Bajo=5', NULL, '2026-06-16 10:00:00', 51, 1, 50, 51, 61, 59, 60, NULL),
 (55, '2026-06-17 10:00:00', '2026-06-17 11:00:00', 0, 'Thor (Alto) + Mia (Bajo) - capacidad Alto=2', NULL, '2026-06-16 10:00:00', 50, 1, 53, 61, NULL, NULL, NULL, NULL),
 (56, '2026-06-14 08:00:00', '2026-06-14 09:00:00', 0, 'Rex + Zoe (Medio) - capacidad Medio=3', NULL, '2026-06-13 10:00:00', 51, 6, 57, 58, NULL, NULL, NULL, NULL),
-(57, '2026-06-18 08:00:00', '2026-06-18 09:00:00', 1, 'Rocky (Peligroso) - segundo paseo con Andres', NULL, '2026-06-17 10:00:00', 50, 1, 52, NULL, NULL, NULL, NULL, NULL);
+(57, '2026-06-18 08:00:00', '2026-06-18 09:00:00', 1, 'Rocky (Peligroso) - segundo paseo con Andres', NULL, '2026-06-17 10:00:00', 50, 1, 52, NULL, NULL, NULL, NULL, NULL),
+(58, '2026-05-29 09:00:00', '2026-05-29 10:00:00', 0, '', NULL, '2026-05-27 03:25:18', 50, 1, 1, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Disparadores `paseo`
@@ -684,8 +685,9 @@ INSERT INTO `tarifa` (`idTarifa`, `PrecioHora`, `FechaInicio`, `Activa`, `Pasead
 (58, 33000, '2026-01-01', 1, 52, 2),
 (59, 25000, '2026-01-01', 1, 53, 1),
 (190, 15000, '2026-05-18', 0, 1, 1),
-(191, 16000, '2026-05-18', 1, 1, 1),
-(192, 17000, '2026-05-18', 1, 1, 2);
+(191, 16000, '2026-05-18', 0, 1, 1),
+(192, 17000, '2026-05-18', 1, 1, 2),
+(193, 16500, '2026-05-26', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -730,6 +732,17 @@ CREATE TABLE `vw_estadisticas_admin` (
 -- (Véase abajo para la vista actual)
 --
 CREATE TABLE `vw_paseadores_activos` (
+`idPaseador` int(11)
+,`Nombre` varchar(15)
+,`Apellido` varchar(15)
+,`Correo` varchar(25)
+,`Contacto` int(11)
+,`Informacion` varchar(500)
+,`AprobadoPeligroso` tinyint(1)
+,`FechaRegistro` timestamp
+,`EstadoNombre` varchar(25)
+,`Localidad` varchar(10)
+,`Ciudad` varchar(12)
 );
 
 -- --------------------------------------------------------
@@ -829,7 +842,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vw_paseadores_activos`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_paseadores_activos`  AS SELECT `p`.`idPaseador` AS `idPaseador`, `p`.`Nombre` AS `Nombre`, `p`.`Apellido` AS `Apellido`, `p`.`Correo` AS `Correo`, `p`.`Contacto` AS `Contacto`, `p`.`Informacion` AS `Informacion`, `p`.`AprobadoPeligroso` AS `AprobadoPeligroso`, `p`.`Multas` AS `Multas`, `p`.`FechaRegistro` AS `FechaRegistro`, `e`.`Nombre` AS `EstadoNombre`, `l`.`Localidad` AS `Localidad`, `c`.`Ciudad` AS `Ciudad` FROM (((`paseador` `p` join `estado` `e` on(`p`.`Estado_idEstado` = `e`.`idEstado`)) left join `localidad` `l` on(`p`.`Localidad_idLocalidad` = `l`.`idLocalidad`)) left join `ciudad` `c` on(`l`.`Ciudad_idCiudad` = `c`.`idCiudad`)) WHERE `p`.`Estado_idEstado` in (2,4) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_paseadores_activos`  AS SELECT `p`.`idPaseador` AS `idPaseador`, `p`.`Nombre` AS `Nombre`, `p`.`Apellido` AS `Apellido`, `p`.`Correo` AS `Correo`, `p`.`Contacto` AS `Contacto`, `p`.`Informacion` AS `Informacion`, `p`.`AprobadoPeligroso` AS `AprobadoPeligroso`, `p`.`FechaRegistro` AS `FechaRegistro`, `e`.`Nombre` AS `EstadoNombre`, `l`.`Localidad` AS `Localidad`, `c`.`Ciudad` AS `Ciudad` FROM (((`paseador` `p` join `estado` `e` on(`p`.`Estado_idEstado` = `e`.`idEstado`)) left join `localidad` `l` on(`p`.`Localidad_idLocalidad` = `l`.`idLocalidad`)) left join `ciudad` `c` on(`l`.`Ciudad_idCiudad` = `c`.`idCiudad`)) WHERE `p`.`Estado_idEstado` in (2,4) ;
 
 -- --------------------------------------------------------
 
@@ -1046,7 +1059,7 @@ ALTER TABLE `paseador`
 -- AUTO_INCREMENT de la tabla `paseo`
 --
 ALTER TABLE `paseo`
-  MODIFY `idPaseo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `idPaseo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `peligrosidad`
@@ -1082,7 +1095,7 @@ ALTER TABLE `tamaño`
 -- AUTO_INCREMENT de la tabla `tarifa`
 --
 ALTER TABLE `tarifa`
-  MODIFY `idTarifa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+  MODIFY `idTarifa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
 
 --
 -- Restricciones para tablas volcadas

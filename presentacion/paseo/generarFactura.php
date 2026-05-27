@@ -121,7 +121,7 @@ $pdf->AddPage();
 $pdf->SetFont('Arial', '', 10);
 
 $pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell(0, 8, 'INFORMACION DEL DUEÑO', 0, 1);
+$pdf->Cell(0, 8, 'INFORMACION DEL DUENIO', 0, 1);
 $pdf->SetFont('Arial', '', 10);
 $pdf->Cell(0, 6, 'Nombre: ' . $nombreDueño, 0, 1);
 $pdf->Cell(0, 6, 'Direccion: ' . $direccionDueño, 0, 1);
