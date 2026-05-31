@@ -32,13 +32,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $ciudad_id = intval($_POST["ciudad"] ?? 0);
     $localidad_id = intval($_POST["localidad"] ?? 0);
 
-    if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $nombre)) $errores['nombre'] = "El nombre solo debe contener letras.";
-    if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $apellido)) $errores['apellido'] = "El apellido solo debe contener letras.";
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) $errores['correo'] = "Ingrese un correo válido (ej: usuario@dominio.com).";
+    if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,12}$/', $nombre)) $errores['nombre'] = "El nombre debe tener entre 3 y 12 letras, sin espacios.";
+    elseif (preg_match('/(.)\1{2,}/u', $nombre)) $errores['nombre'] = "El nombre no puede tener más de 2 letras iguales consecutivas.";
+
+    if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,12}$/', $apellido)) $errores['apellido'] = "El apellido debe tener entre 3 y 12 letras, sin espacios.";
+    elseif (preg_match('/(.)\1{2,}/u', $apellido)) $errores['apellido'] = "El apellido no puede tener más de 2 letras iguales consecutivas.";
+    
+    if (empty($correo)) $errores['correo'] = "El correo es obligatorio.";
+    elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) $errores['correo'] = "Ingrese un correo válido (ej: usuario@dominio.com).";
+    elseif (!preg_match('/@(hotmail\.com|gmail\.com|patitas\.com)$/i', $correo)) $errores['correo'] = "El correo debe terminar en @hotmail.com, @gmail.com o @patitas.com.";
+    
     if (strlen($clave) < 8 || !preg_match('/[a-zA-Z]/', $clave) || !preg_match('/[0-9]/', $clave)) $errores['clave'] = "La contraseña debe tener mínimo 8 caracteres, con letras y números.";
-    if (!preg_match('/^\d+$/', $contacto)) $errores['contacto'] = "El contacto solo debe contener números.";
-    if (!preg_match('/^\d+$/', $nroDocumento)) $errores['nroDocumento'] = "El documento solo debe contener números.";
+    
+    $prefijosValidos = ['310','311','312','313','314','320','321','322','323','300','301','302','304','305','350','315','316','317','318'];
+    if (empty($contacto)) $errores['contacto'] = "El teléfono es obligatorio.";
+    elseif (!preg_match('/^\d{10}$/', $contacto)) $errores['contacto'] = "El teléfono debe tener exactamente 10 números.";
+    elseif (!in_array(substr($contacto, 0, 3), $prefijosValidos)) $errores['contacto'] = "El teléfono debe iniciar con un prefijo colombiano válido (310, 311, 312...).";
+
+    if (empty($nroDocumento)) $errores['nroDocumento'] = "El número de documento es obligatorio.";
+    elseif (!preg_match('/^\d{8,10}$/', $nroDocumento)) $errores['nroDocumento'] = "El documento debe tener entre 8 y 10 números.";
+    
     if (empty($direccion)) $errores['direccion'] = "La dirección es obligatoria.";
+    
     if ($ciudad_id <= 0) $errores['ciudad'] = "Seleccione una ciudad.";
     if ($localidad_id <= 0) $errores['localidad'] = "Seleccione un barrio/localidad.";
 

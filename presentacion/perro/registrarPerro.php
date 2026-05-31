@@ -28,14 +28,25 @@ if (isset($_POST["crearPerro"])) {
         $mensaje = "El nombre del perro es obligatorio.";
         $claseMensaje = "alert-danger";
         $errorEnSubidaFoto = true;
-    } elseif ($peso <= 0) {
-        $mensaje = "El peso debe ser un valor positivo.";
+    } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,12}$/', $nombrePerro)) {
+        $mensaje = "El nombre debe tener entre 3 y 12 letras, sin espacios.";
         $claseMensaje = "alert-danger";
         $errorEnSubidaFoto = true;
+    } elseif (preg_match('/(.)\1{2,}/u', $nombrePerro)) {
+        $mensaje = "El nombre no puede tener más de 2 letras iguales consecutivas.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+
+    } elseif ($peso <= 0 || $peso > 110) {
+        $mensaje = "El peso debe ser un valor positivo y no mayor a 110 kg.";
+        $claseMensaje = "alert-danger";
+        $errorEnSubidaFoto = true;
+
     } elseif ($razaId <= 0) {
         $mensaje = "Debe seleccionar una raza.";
         $claseMensaje = "alert-danger";
         $errorEnSubidaFoto = true;
+
     } elseif ($peligrosidadId <= 0) {
         $mensaje = "Debe seleccionar un nivel de peligrosidad.";
         $claseMensaje = "alert-danger";

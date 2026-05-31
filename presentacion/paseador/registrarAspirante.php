@@ -32,17 +32,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $erroresCampos = [];
     if (empty($nombre)) $erroresCampos['nombre'] = "El nombre es obligatorio.";
-    elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $nombre)) $erroresCampos['nombre'] = "El nombre solo debe contener letras.";
+    elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,12}$/', $nombre)) $erroresCampos['nombre'] = "El nombre debe contener unicamente letras, entre 3 y 12 letras, y sin espacios.";
+    elseif (preg_match('/(.)\1{2,}/u', $nombre)) $erroresCampos['nombre'] = "El nombre no puede tener más de 2 letras iguales consecutivas.";
+    
     if (empty($apellido)) $erroresCampos['apellido'] = "El apellido es obligatorio.";
-    elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $apellido)) $erroresCampos['apellido'] = "El apellido solo debe contener letras.";
+    elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,12}$/', $apellido)) $erroresCampos['apellido'] = "El apellido debe contener unicamente letras, entre 3 y 12 letras, sin espacios.";
+    elseif (preg_match('/(.)\1{2,}/u', $apellido)) $erroresCampos['apellido'] = "El apellido no puede tener más de 2 letras iguales consecutivas.";
+    
     if (empty($nroDocumento)) $erroresCampos['nroDocumento'] = "El número de documento es obligatorio.";
-    elseif (!preg_match('/^\d+$/', $nroDocumento)) $erroresCampos['nroDocumento'] = "El documento solo debe contener números.";
+    elseif (!preg_match('/^\d{8,10}$/', $nroDocumento)) $erroresCampos['nroDocumento'] = "El documento debe tener entre 8 y 10 números.";
+
+  $prefijosValidos = ['310','311','312','313','314','320','321','322','323','300','301','302','304','305','350','315','316','317','318'];
     if (empty($contacto)) $erroresCampos['contacto'] = "El teléfono es obligatorio.";
-    elseif (!preg_match('/^\d+$/', $contacto)) $erroresCampos['contacto'] = "El teléfono solo debe contener números.";
+    elseif (!preg_match('/^\d{10}$/', $contacto)) $erroresCampos['contacto'] = "El teléfono debe tener exactamente 10 números.";
+    elseif (!in_array(substr($contacto, 0, 3), $prefijosValidos)) $erroresCampos['contacto'] = "El teléfono debe iniciar con un prefijo colombiano válido (310, 311, 312...).";
+
     if (empty($correo)) $erroresCampos['correo'] = "El correo es obligatorio.";
     elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) $erroresCampos['correo'] = "Ingrese un correo válido (ej: usuario@dominio.com).";
+    elseif (!preg_match('/@(hotmail\.com|gmail\.com|patitas\.com)$/i', $correo)) $erroresCampos['correo'] = "El correo debe terminar en @hotmail.com, @gmail.com o @patitas.com.";
+
     if (empty($clave)) $erroresCampos['clave'] = "La contraseña es obligatoria.";
     elseif (strlen($clave) < 8 || !preg_match('/[a-zA-Z]/', $clave) || !preg_match('/[0-9]/', $clave)) $erroresCampos['clave'] = "La contraseña debe tener mínimo 8 caracteres, con letras y números.";
+    
     if (empty($fechaNacimiento)) $erroresCampos['fechaNacimiento'] = "La fecha de nacimiento es obligatoria.";
     elseif (!empty($fechaNacimiento)) {
         $fechaNacDT = new DateTime($fechaNacimiento);
@@ -179,7 +190,7 @@ $ciudades = $ciudad->consultarTodos();
 
               <div class="mb-3">
                 <label class="form-label">Correo Electrónico</label>
-                <input type="email" name="correo" class="form-control <?= isset($erroresCampos['correo']) ? 'is-invalid' : '' ?>" autocomplete="off" required value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>">
+                <input type="text" name="correo" class="form-control <?= isset($erroresCampos['correo']) ? 'is-invalid' : '' ?>" autocomplete="off" required value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>">
                 <div class="invalid-feedback"><?= $erroresCampos['correo'] ?? '' ?></div>
               </div>
 
